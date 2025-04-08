@@ -1,0 +1,141 @@
+.libraryViewer {
+  padding: 1rem;
+}
+
+.categoryHeader {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+}
+
+.categoryHeader h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.categoryDescription {
+  color: #898989;
+}
+
+.videosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 1.5rem;
+  transition: all 0.3s ease-in-out;
+  /* padding: 1rem; */
+}
+
+.videoCard {
+  /* background-color: var(--color-card-bg); */
+  border-radius: 8px;
+  overflow: hidden;
+  /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease-in-out;
+}
+
+.videoContent {
+  width: 100%;
+}
+
+.thumbnailContainer {
+  position: relative;
+  padding-top: 56.25%; /* 16:9 */
+  width: 100%;
+}
+
+.videoThumbnail {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumbnailLink {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.videoInfo {
+  margin-top:1rem;
+  /* padding: 1rem; */
+  transition: all 0.3s ease-in-out;
+}
+
+.videoTitle {
+  font-size: 1rem;
+  /* line-height: 1.25; */
+  margin: 0 0 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.titleLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.titleLink:hover {
+  text-decoration: underline;
+}
+
+.videoMeta {
+  font-size: 0.85rem;
+  color: #898989;
+}
+
+.videoMeta span:not(:last-child)::after {
+  content: "•";
+  margin: 0 0.5rem;
+}
+
+.categoryLinkContainer {
+  margin-top: 0rem;
+  font-size: 0.85rem;
+  color: #898989;
+}
+
+.categoryLinkContainer a {
+  color: #898989;
+  text-decoration: none;
+}
+
+.categoryLinkContainer a:hover {
+  text-decoration: underline;
+  color: #444;
+}
+
+.noVideos {
+  padding: 2rem;
+  text-align: center;
+  border-radius: 8px;
+}
+
+@media (max-width: 512px) {
+  .videoCard {
+    background-color: inherit;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease-in-out;
+  }
+  .videosGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 3rem;
+    padding: 0rem;
+    transition: all 0.3s ease-in-out;
+  }
+  .videoInfo {
+    margin-top: 1rem;
+    padding: 0rem;
+    transition: all 0.3s ease-in-out;
+  }
+}

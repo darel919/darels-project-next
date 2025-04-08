@@ -1,26 +1,66 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Segoe UI font family */
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono', monospace;
+  
+  /* Original Geist variables kept for reference */
+  --font-geist-sans: 'Geist Sans', -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  --font-geist-mono: 'Geist Mono', monospace;
+  
+  /* Light mode colors */
+  --color-primary: #ffffff;
+  --color-secondary: #f3f4f6;
+  --color-accent: #3b82f6;
+  --color-text: #1f2937;
+  --color-text-secondary: #4b5563;
+
+  --color-card-bg: #ffffff;
+
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+
+  --background: 0 0% 100%;
+  --foreground: 0 0% 3.9%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Force font family on all elements to ensure proper application */
+html, body, input, button, textarea, select {
+  font-family: var(--font-sans);
+  
+}
+a {
+  text-decoration: none;
+  color: inherit;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+
+    /* Dark mode colors */
+    --color-primary: #1f2937;
+    --color-secondary: #111827;
+    --color-accent: #60a5fa;
+    --color-text: #f9fafb;
+    --color-text-secondary: #d1d5db;
+
+    --color-card-bg: #151515;
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
 }
