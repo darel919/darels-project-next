@@ -7,7 +7,7 @@ import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
 import styles from './page.module.css';
 
 export async function generateMetadata({ searchParams }) {
-  const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseURL = 'https://api.darelisme.my.id/dp';
   const params = await searchParams;
   const videoId = params.v;
 

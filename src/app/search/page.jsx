@@ -2,9 +2,9 @@
 
 import LibraryItemViewer from '@/components/LibraryItemViewer';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
-export default function SearchPage() {
+function SearchResults() {
   const searchParams = useSearchParams();
   const query = searchParams.get('q');
   const [results, setResults] = useState([]);
@@ -57,7 +57,7 @@ export default function SearchPage() {
       )}
 
       {error && (
-        <div className="alert">
+        <div className="alert alert-error">
           <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -66,7 +66,7 @@ export default function SearchPage() {
       )}
 
       {!loading && !error && results.length === 0 && (
-        <div className="alert">
+        <div className="alert alert-info">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -80,5 +80,18 @@ export default function SearchPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// SearchPage component with suspense boundary
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    }>
+      <SearchResults />
+    </Suspense>
   );
 }
