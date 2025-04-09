@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@plugin "daisyui";
 
 :root {
   /* Segoe UI font family */
@@ -31,6 +32,8 @@
 /* Force font family on all elements to ensure proper application */
 html, body, input, button, textarea, select {
   font-family: var(--font-sans);
+  margin:0;
+
   
 }
 a {
@@ -57,6 +60,7 @@ a {
 
 body {
   color: rgb(var(--foreground-rgb));
+  padding: 2rem;
   background: linear-gradient(
       to bottom,
       transparent,

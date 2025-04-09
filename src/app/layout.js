@@ -1,7 +1,7 @@
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import './globals.css';
-import Navbar from '../../components/Navbar';
+import Navbar from '../components/Navbar';
 
 
 export const metadata = {

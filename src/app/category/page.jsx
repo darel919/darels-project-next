@@ -1,5 +1,7 @@
+"use server"
+
 import { getCategoryData } from "@/lib/api";
-import LibraryItemViewer from "../../../components/LibraryItemViewer";
+import LibraryItemViewer from "../../components/LibraryItemViewer";
 
 export async function generateMetadata({ searchParams }) {
   const params = await searchParams;

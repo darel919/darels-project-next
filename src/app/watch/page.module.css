@@ -1,0 +1,64 @@
+.videoPlayer {
+    width: 70%;
+}
+
+/* Container for watch and recommendation components */
+.watchContainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* Default styles for desktop and medium screens */
+.watchComp {
+    width: 100%;
+}
+
+.recommendationComp {
+    width: 100%;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+    .watchContainer {
+        flex-direction: column;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .watchComp {
+        width: 100%;
+    }
+    
+    .recommendationComp {
+        width: 100%;
+        min-width: 100%;
+        margin-top: 1rem;
+        transition: all 0.2s ease-in-out;
+    }
+}
+
+/* Medium screens (768px-1024px) - consistent with larger screens */
+@media (min-width: 768px) {
+    .watchContainer {
+        flex-direction: row;
+        align-items: flex-start;
+        transition: all 0.2s ease-in-out;
+    }
+
+    .watchComp {
+        width: 65%;
+        padding: 0 1rem 0 0;
+        height: 100%;
+    }
+
+    .recommendationComp {
+        width: 35%;
+        margin-top: -10px;
+        transition: all 0.2s ease-in-out;
+    }
+}
+
+/* Remove the conflicting media query that was causing issues */
+@media (max-width: 1024px) and (min-width: 769px) {
+    /* removing this style as it was causing the recommendationComp to take too much space */
+}

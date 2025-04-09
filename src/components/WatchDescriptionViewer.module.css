@@ -1,0 +1,8 @@
+.descComp {
+  padding: 1rem;
+  border-radius: 8px;
+  background-color: hsl(var(--b1));
+}
+.catComp {
+  padding: 0 1.5rem;
+}

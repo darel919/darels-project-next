@@ -1,4 +1,8 @@
 import { getVideoData } from '@/lib/api';
+import Player from '../../components/Player';
+import Recommendation from '../../components/WatchRecommendations';
+import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
+import styles from './page.module.css';
 
 export async function generateMetadata({ searchParams }) {
   const params = await searchParams;
@@ -33,32 +37,60 @@ export default async function WatchPage({ searchParams }) {
   if (videoId) {
     try {
       videoData = await getVideoData(videoId);
+      
+      // Make sure the YouTube video ID is available in playerData
+      if (!videoData.yt_vid_id && videoId) {
+        videoData.yt_vid_id = videoId;
+      }
     } catch (err) {
       error = err.message;
     }
   }
   
+  // Process the description on the server side
+  const description = videoData?.description || videoData?.desc 
+    ? (videoData.description || videoData.desc) 
+    : "No description for this video";
+  
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
-        
+    <main className="flex min-h-screen flex-col items-center p-24">
+      <div className="w-full max-w-5xl">
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
+          <div className="alert alert-error mb-4">
+            <span>{error}</span>
           </div>
         )}
         
         {videoId && !error ? (
           videoData ? (
-            <div className="mt-4">
-              <h2 className="text-2xl font-bold">{videoData.title}</h2>
-              <p className="mt-2">{videoData.description}</p>
-            </div>
+            <section className={styles.watchContainer}>
+              <div className={styles.watchComp}>
+                <div className="mt-4">
+                  <div className="w-full bg-black relative" style={{ 
+                    minHeight: '400px',
+                    aspectRatio: '16/9'
+                  }}>
+                    <Player playerData={videoData} className="w-full h-full" />
+                  </div>
+                  <h1 className="text-xl font-bold mt-1">{videoData.title}</h1>
+                  
+                  <WatchDescriptionViewer videoData={videoData} description={description}/>
+                </div>
+              </div>
+              <div className={styles.recommendationComp}>
+                <Recommendation videoId={videoId} />
+              </div>
+            </section>
           ) : (
-            <p>Loading video data...</p>
+            <div className="flex flex-col items-center p-8">
+              <span className="loading loading-spinner loading-lg text-primary"></span>
+              <p className="mt-4">Loading video data...</p>
+            </div>
           )
         ) : (
-          <p>No video ID provided. Please use ?v=videoId in the URL.</p>
+          <div className="alert alert-info">
+            <span>No video ID provided. Please use ?v=videoId in the URL.</span>
+          </div>
         )}
       </div>
     </main>

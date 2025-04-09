@@ -1,0 +1,178 @@
+.categorySelector {
+  margin-bottom: 10px;
+}
+
+.categorySelector label {
+  margin-right: 5px;
+}
+.recommendationsContainer {
+  /* width: 100%; */
+  padding: 0.5rem;
+}
+
+.recommendationsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.recommendationItem {
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+  height: auto;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.recommendationItem:hover {
+  transform: translateY(-2px);
+}
+
+.recommendationLink {
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+  height: auto;
+  /* gap: 8px;
+  padding: 10px 0; */
+}
+
+.thumbnailWrapper {
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.videoThumbnail {
+  border-radius: 5px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.videoThumbnail:hover {
+  transform: scale(1.05);
+}
+
+.videoInfo {
+  padding: 0 10px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  justify-content: flex-start;
+  gap: 2px;
+}
+
+.videoTitle {
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.2;
+}
+
+.videoMeta {
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 0.75rem;
+  color: #606060;
+  gap: 3px;
+  margin-top: 1px;
+}
+
+.videoMeta span {
+  display: flex;
+  align-items: center;
+}
+
+.videoMeta span:after {
+  content: "•";
+  display: inline-block;
+  margin: 0 4px;
+}
+
+.videoMeta span:last-child:after {
+  content: "";
+  margin: 0;
+}
+
+.categoryLink {
+  font-size: 0.75rem;
+  margin-top: 4px;
+  color: #606060;
+}
+
+.categoryLink a {
+  color: var(--accent-color, #0070f3);
+  text-decoration: none;
+}
+
+.categoryLink a:hover {
+  text-decoration: underline;
+}
+
+.noRecommendations {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 160px;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #666);
+}
+
+/* Add responsive styles similar to the Blazor version */
+@media (min-width: 1024px) {
+  .thumbnailWrapper {
+    width: 150px;
+    flex: 0 0 150px;
+    margin-right: 12px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .videoThumbnail {
+    width: 100%;
+    height: auto;
+  }
+  
+  .videoTitle {
+    font-size: 1rem;
+    font-weight: bolder;
+    -webkit-line-clamp: 2;
+  }
+}
+
+@media (max-width: 1024px) {
+  .thumbnailWrapper {
+    width: 120px;
+    flex: 0 0 120px;
+    margin-right: 6px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .videoThumbnail {
+    width: 100%;
+    height: auto;
+  }
+  
+  .videoTitle {
+    font-size: 1rem;
+    font-weight: bolder;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2rem;
+    -webkit-line-clamp: 1;
+  }
+}
