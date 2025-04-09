@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
 import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './WatchRecommendations.module.css';
 

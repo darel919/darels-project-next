@@ -5,7 +5,6 @@ import Hls from 'hls.js';
 import artplayerPluginHlsControl from 'artplayer-plugin-hls-control';
 import Artplayer from 'artplayer';
 import styles from './Player.module.css';
-// import { base } from 'daisyui/imports';
 
 export default function Player({ playerData, className }) {
     const artRef = useRef(null);
@@ -27,13 +26,11 @@ export default function Player({ playerData, className }) {
     useEffect(() => {
         if (!playerData) return;
         
-        // Clean up any existing player
         if (artRef.current) {
             artRef.current.destroy();
             artRef.current = null;
         }
         
-        // Check if this is a self-hosted video first
         if (playerData.source === 'selfhost') {
             if (!playerData.selfHostUrl) {
                 setErrorMsg("has no valid URL.");
@@ -44,15 +41,12 @@ export default function Player({ playerData, className }) {
             console.log("Using self-hosted mode with ArtPlayer");
             setIsSelfMode(true);
             
-            // We'll initialize ArtPlayer on the next render when containerRef is available
             setTimeout(() => initializeArtPlayer(), 0);
         } 
-        // If not self-hosted, use iframe for YouTube
         else if (playerData.yt_vid_id) {
             console.log("Using YouTube iframe");
             setIsSelfMode(false);
         } 
-        // No valid source
         else {
             setErrorMsg("No valid playback source available.");
             setTimeout(() => window.close(), 3000);
@@ -63,10 +57,9 @@ export default function Player({ playerData, className }) {
         if (!containerRef.current || !playerData || !playerData.selfHostUrl) return;
 
         const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
+        const thumbUrl = baseAPIEndpoint + '/thumb?id=' + playerData.id;
+        console.log(thumbUrl)
         const hlsUrl = baseAPIEndpoint.replace(/\/dp$/, '') + playerData.selfHostUrl;
-        console.log(baseAPIEndpoint)
-        
-        console.log("Initializing ArtPlayer with URL:", hlsUrl);
 
         if (artRef.current) {
             artRef.current.destroy();
@@ -84,14 +77,14 @@ export default function Player({ playerData, className }) {
             autoSize: false,
             autoMini: true,
             loop: false,
-            flip: true,
+            flip: false,
             playbackRate: true,
             aspectRatio: false,
             setting: true,
+            fullscreenWeb: false,
             hotkey: true,
             pip: true,
             fullscreen: true,
-            fullscreenWeb: true,
             subtitleOffset: true,
             miniProgressBar: true,
             mutex: true,
@@ -99,24 +92,20 @@ export default function Player({ playerData, className }) {
             playsInline: true,
             autoPlayback: true,
             airplay: true,
+            autoOrientation: true,
+            screenshot: true,
             theme: '#23ade5',
+            poster: thumbUrl,
             lang: navigator.language.toLowerCase(),
-            whitelist: ['*'],
-            moreVideoAttr: {
-                crossOrigin: 'anonymous',
-            },
-            style: {
-                width: '100%',
-                height: '100%',
-                minHeight: '300px',
-                margin: '0',
-                padding: '0'
-            },
             plugins: [
                 artplayerPluginHlsControl({
-                    setting: true, // Enable quality settings in player menu
-                    title: 'Quality',
-                    auto: 'Auto',
+                    quality: {
+                        control: true,
+                        setting: true,
+                        getName: (level) => `${level.height}P`,
+                        title: 'Quality',
+                        auto: 'Auto',
+                    },
                 }),
             ],
             customType: {
@@ -167,7 +156,6 @@ export default function Player({ playerData, className }) {
         );
     }
 
-    // If self-hosted mode, return the ArtPlayer container
     if (isSelfMode) {
         return (
             <div 
@@ -177,7 +165,6 @@ export default function Player({ playerData, className }) {
         );
     }
 
-    // Otherwise, return the YouTube iframe player
     return (
         <div id="iframe" className={`w-full h-full flex justify-center items-center bg-base-300 bg-opacity-35 ${styles.iframeComp}`}>
             {loadingIframe && (

@@ -34,7 +34,7 @@ export default function VideoDescription({ videoData, description }) {
               Show less
             </button>
           </div>
-          <p className="mt-2">
+          <p className="my-4">
             {description}
           </p>
           {videoData.expand?.category?.[0] && (

@@ -3,6 +3,37 @@
 @tailwind utilities;
 @plugin "daisyui";
 
+* {
+  padding: 0;
+  box-sizing: border-box;
+}
+@media (min-width: 768px) {
+  main {
+    padding: 80px 2rem 2rem 2rem;
+  }
+}
+@media (max-width: 768px) {
+  main {
+    padding: 78px 0.75rem 0.75rem 0.75rem; 
+  }
+
+  .navbar .text-xl {
+    display: none;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+  min-height: 100vh;
+}
+
+
 :root {
   /* Segoe UI font family */
   --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
@@ -29,7 +60,6 @@
   --foreground: 0 0% 3.9%;
 }
 
-/* Force font family on all elements to ensure proper application */
 html, body, input, button, textarea, select {
   font-family: var(--font-sans);
   margin:0;
@@ -56,15 +86,4 @@ a {
 
     --color-card-bg: #151515;
   }
-}
-
-body {
-  color: rgb(var(--foreground-rgb));
-  padding: 2rem;
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
 }

@@ -2,12 +2,10 @@ import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './LibraryItemViewer.module.css';
 
 export default function LibraryItemViewer({ data }) {
-  // console.log('LibraryItemViewer data:', data);
   
   let videos = Array.isArray(data) ? data : data?.result?.videos || data?.result || data?.videos || [];
   
   const categoryInfo = data?.category || null;
-  // console.log('Processed videos:', videos);
 
   const getThumbnailUrl = (videoId) => {
     return `${process.env.NEXT_PUBLIC_API_BASE_URL}/thumb?id=${videoId}`;

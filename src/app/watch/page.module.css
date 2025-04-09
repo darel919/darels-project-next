@@ -2,14 +2,14 @@
     width: 70%;
 }
 
-/* Container for watch and recommendation components */
+
 .watchContainer {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-/* Default styles for desktop and medium screens */
+
 .watchComp {
     width: 100%;
 }
@@ -18,7 +18,7 @@
     width: 100%;
 }
 
-/* Mobile styles */
+
 @media (max-width: 768px) {
     .watchContainer {
         flex-direction: column;

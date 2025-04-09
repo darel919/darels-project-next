@@ -6,13 +6,26 @@ import LibraryItemViewer from "../../components/LibraryItemViewer";
 export async function generateMetadata({ searchParams }) {
   const params = await searchParams;
   const listId = params.list;
-  
+
+  let categoryData = null;
+  let error = null;
+
+  if (listId) {
+    try {
+      categoryData = await getCategoryData(listId);
+    } catch (err) {
+      error = err.message;
+    }
+  }
+
+  const listName = categoryData?.category.title || 'All';
+
   return {
-    title: `Category: ${listId || 'All'}`,
-    description: `Browse videos in category ${listId || 'All'}`,
+    title: `${listName} - darel's Projects`,
+    description: `Browse videos in category ${listName}`,
     openGraph: {
-      title: `Category: ${listId || 'All'}`,
-      description: `Browse videos in category ${listId || 'All'}`,
+      title: `${listName} - darel's Projects`,
+      description: `Browse videos in category ${listName}`,
     },
   };
 }
@@ -24,16 +37,16 @@ export default async function CategoryPage({ searchParams }) {
   let categoryData = null;
   let error = null;
 
-    if (listId) {
-      try {
-        categoryData = await getCategoryData(listId);
-      } catch (err) {
-        error = err.message;
-      }
+  if (listId) {
+    try {
+      categoryData = await getCategoryData(listId);
+    } catch (err) {
+      error = err.message;
     }
-  
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <section className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
         <LibraryItemViewer data={categoryData} />
         {error && (
@@ -42,6 +55,6 @@ export default async function CategoryPage({ searchParams }) {
           </div>
         )}
       </div>
-    </main>
+    </section>
   );
 }
