@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 export const metadata = {
   title: "darel's Projects",
   description: "Welcome to darel's Projects. This is a collection of various projects and experiments.",
+  metadataBase: new URL('https://projects.darelisme.my.id'),
   openGraph: {
     title: "darel's Projects",
     description: "Welcome to darel's Projects. This is a collection of various projects and experiments.",
