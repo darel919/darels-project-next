@@ -8,7 +8,7 @@ export async function serverFetch(endpoint, options = {}) {
     headers: {
       'Content-Type': 'application/json',
       'User-Agent': 'dp-iPlayer',
-      'environment': process.env.NODE_ENV,
+      'X-Environment': process.env.NODE_ENV,
       ...options.headers,
     },
   });
@@ -24,19 +24,24 @@ export async function getAllVideo() {
     return serverFetch(`/?sortBy=desc`);
 }
 
-export async function getVideoData(videoId) {
-  if (!videoId) {
-    throw new Error('Video ID is required');
-  }
+export async function getVideoData(id) {
+  try {
+    const res = await fetch(`https://api.darelisme.my.id/dp/watch?v=${id}`, { next: { revalidate: 600 } });
+    
+    if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error("Video not found. It may have been removed, unavailable, or you might have an invalid link.");
+      }
+      throw new Error(`Failed to fetch video data (HTTP ${res.status})`);
+    }
 
-  const response = await fetch(`${API_BASE_URL}/watch?v=${videoId}`);
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch video data: ${response.status}`);
+    return await res.json();
+  } catch (error) {
+    if (error.message === "fetch failed") {
+      throw new Error("Unable to connect to the video server. Please check your internet connection or try again later.");
+    }
+    throw error;
   }
-  
-  const data = await response.json();
-  return data;
 }
 
 export async function getAllCategoriesData() {

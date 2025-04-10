@@ -31,19 +31,11 @@ export default function Player({ playerData, className }) {
             artRef.current = null;
         }
         
-        if (playerData.source === 'selfhost') {
-            if (!playerData.selfHostUrl) {
-                setErrorMsg("has no valid URL.");
-                setTimeout(() => window.close(), 3000);
-                return;
-            }
-        
+        if (playerData.selfHostUrl) {
             setIsSelfMode(true);
-            
             setTimeout(() => initializeArtPlayer(), 0);
         } 
         else if (playerData.yt_vid_id) {
-
             setIsSelfMode(false);
         } 
         else {

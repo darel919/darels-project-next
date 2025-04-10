@@ -60,19 +60,14 @@ export default async function WatchPage({ searchParams }) {
   const params = await searchParams;
   const videoId = params.v;
   
-  let videoData = null;
-  let error = null;
+  if (!videoId) {
+    throw new Error("Invalid Video ID. Please check the URL and try again.");
+  }
+
+  const videoData = await getVideoData(videoId);
   
-  if (videoId) {
-    try {
-      videoData = await getVideoData(videoId);
-      
-      if (!videoData.yt_vid_id && videoId) {
-        videoData.yt_vid_id = videoId;
-      }
-    } catch (err) {
-      error = err.message;
-    }
+  if (!videoData.yt_vid_id && videoId) {
+    videoData.yt_vid_id = videoId;
   }
   
   const description = videoData?.description || videoData?.desc 
@@ -80,46 +75,27 @@ export default async function WatchPage({ searchParams }) {
     : "No description for this video";
   
   return (
-      <section className="flex min-h-screen flex-col items-center pt-16 sm:pt-24 px-4 sm:px-12">
-        <div className="w-full">
-          {error && (
-            <div className="alert alert-error mb-4">
-              <span>{error}</span>
-            </div>
-          )}
-          
-          {videoId && !error ? (
-            videoData ? (
-              <section className={styles.watchContainer}>
-                <div className={styles.watchComp}>
-                  <div className="mt-4">
-                    <div className="bg-black relative" style={{ 
-                      aspectRatio: '16/9',
-                      width: '100%',
-                    }}>
-                      <Player playerData={videoData} className="w-full h-full" />
-                    </div>
-                    <h1 className="text-xl font-bold mt-6 mb-4">{videoData.title}</h1>
-                    
-                    <WatchDescriptionViewer videoData={videoData} description={description}/>
-                  </div>
-                </div>
-                <div className={styles.recommendationComp}>
-                  <Recommendation videoId={videoId} />
-                </div>
-              </section>
-            ) : (
-              <div className="flex flex-col items-center p-8">
-                <span className="loading loading-spinner loading-lg text-primary"></span>
-                <p className="mt-4">Loading video data...</p>
+    <section className="flex min-h-screen flex-col items-center pt-16 sm:pt-24 px-4 sm:px-12">
+      <div className="w-full">
+        <section className={styles.watchContainer}>
+          <div className={styles.watchComp}>
+            <div className="mt-4">
+              <div className="bg-black relative" style={{ 
+                aspectRatio: '16/9',
+                width: '100%',
+              }}>
+                <Player playerData={videoData} className="w-full h-full" />
               </div>
-            )
-          ) : (
-            <div className="alert alert-info">
-              <span>No video ID provided. Please use ?v=videoId in the URL.</span>
+              <h1 className="text-xl font-bold mt-6 mb-4">{videoData.title}</h1>
+              
+              <WatchDescriptionViewer videoData={videoData} description={description}/>
             </div>
-          )}
-        </div>
-      </section>
-      );
+          </div>
+          <div className={styles.recommendationComp}>
+            <Recommendation videoId={videoId} />
+          </div>
+        </section>
+      </div>
+    </section>
+  );
 }

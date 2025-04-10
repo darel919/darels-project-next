@@ -8,6 +8,16 @@ import { useEffect, useState } from 'react';
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -24,7 +34,7 @@ export default function Navbar() {
 
   return (
     <div className="w-full h-16 fixed top-0 left-0 right-0 z-99">
-      <div className="navbar min-h-16 h-full bg-base-100 shadow-md px-6">
+      <div className={`navbar min-h-16 h-full transition-colors duration-200 ${isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent'} px-6`}>
         <div className="flex-none flex items-center">
           <div className="drawer">
             <input id="navbar-menu" type="checkbox" className="drawer-toggle" />

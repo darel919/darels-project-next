@@ -9,6 +9,7 @@ export default function Footer() {
             </Link>
             <nav>
                 <h6 className="footer-title">Links</h6>
+                <a className="link link-hover" target="_blank" href="/about">About</a>
                 <a className="link link-hover" target="_blank" href="https://github.com/darel919/darels-project-next">darel's Projects on GitHub</a>
                 <a className="link link-hover" target="_blank" href="https://darelisme.my.id">DWS Home</a>
             </nav>
