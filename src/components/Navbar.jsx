@@ -34,7 +34,7 @@ export default function Navbar() {
 
   return (
     <div className="w-full h-16 fixed top-0 left-0 right-0 z-99">
-      <div className={`navbar min-h-16 h-full transition-colors duration-200 ${isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent'} px-6`}>
+      <div className={`navbar min-h-16 h-full transition-colors duration-200 ${isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent'} px-2 sm:px-6`}>
         <div className="flex-none flex items-center">
           <div className="drawer">
             <input id="navbar-menu" type="checkbox" className="drawer-toggle" />

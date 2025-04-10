@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { useEffect, useRef, useState } from 'react';
 import Hls from 'hls.js';
@@ -11,15 +11,17 @@ export default function Player({ playerData, className }) {
     const containerRef = useRef(null);
     const videoRef = useRef(null);
     const [bgUrl, setBgUrl] = useState(null);
-    const [isSelfMode, setIsSelfMode] = useState(false);
+    const [isSelfMode, setIsSelfMode] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
-    const [loadingIframe, setLoadingIframe] = useState(true);
+    const [loadingIframe, setLoadingIframe] = useState(false);
+    const [isInitializing, setIsInitializing] = useState(true);
     const [useProxy, setUseProxy] = useState(false);
-    
+
+    const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
+
     useEffect(() => {
         if (playerData?.yt_vid_id) {
-            const APIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL || '/';
-            setBgUrl(`${APIEndpoint}/thumb?id=${playerData.yt_vid_id}`);
+            setBgUrl(`${baseAPIEndpoint}/thumb?id=${playerData.yt_vid_id}`);
         }
     }, [playerData?.yt_vid_id]);
 
@@ -33,23 +35,30 @@ export default function Player({ playerData, className }) {
         
         if (playerData.selfHostUrl) {
             setIsSelfMode(true);
-            setTimeout(() => initializeArtPlayer(), 0);
         } 
         else if (playerData.yt_vid_id) {
             setIsSelfMode(false);
+            setLoadingIframe(true);
         } 
         else {
             setErrorMsg("No valid playback source available.");
             setTimeout(() => window.close(), 3000);
         }
+        setIsInitializing(false);
     }, [playerData]);
+
+    useEffect(() => {
+        if (isSelfMode && playerData?.selfHostUrl) {
+            initializeArtPlayer();
+        }
+    }, [isSelfMode, playerData]);
 
     const initializeArtPlayer = () => {
         if (!containerRef.current || !playerData || !playerData.selfHostUrl) return;
 
-        const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
         const thumbUrl = baseAPIEndpoint + '/thumb?id=' + playerData.id;
         const hlsUrl = baseAPIEndpoint.replace(/\/dp$/, '') + playerData.selfHostUrl;
+        // console.log(baseAPIEndpoint, hlsUrl, thumbUrl)  
 
         if (artRef.current) {
             artRef.current.destroy();
@@ -102,11 +111,7 @@ export default function Player({ playerData, className }) {
                 m3u8: function playM3u8(video, url, art) {
                     if (Hls.isSupported()) {
                         if (art.hls) art.hls.destroy();
-                        const hls = new Hls({
-                            xhrSetup: (xhr, url) => {
-                                xhr.withCredentials = false;
-                            }
-                        });
+                        const hls = new Hls();
                         
                         hls.loadSource(url);
                         hls.attachMedia(video);
@@ -126,11 +131,24 @@ export default function Player({ playerData, className }) {
                 }
             },
         });
+
+        // console.warn('Artplayer initialized:', artRef.current);
     };
 
     const handleIframeLoad = () => {
         setLoadingIframe(false);
     };
+
+    if (isInitializing || isSelfMode === null) {
+        return (
+            <div className="w-full h-full flex justify-center items-center bg-base-300">
+                <div className="flex flex-col items-center">
+                    <span className="loading loading-ball loading-xl"></span>
+                    <h2 className="text-base-content font-light text-3xl mt-4">Loading iPlayer</h2>
+                </div>
+            </div>
+        );
+    }
 
     if (errorMsg) {
         return (
@@ -166,11 +184,8 @@ export default function Player({ playerData, className }) {
                             className="absolute inset-0 w-full h-full object-cover z-[-1]" 
                         />
                     )}
-                    <h1 className="text-2xl font-bold text-white">Loading iframe...</h1>
-                    <div className="progress w-56 my-4">
-                        <div className="bg-primary indeterminate"></div>
-                    </div>
-                    <h2 className="text-white">Waiting YouTube response</h2>
+                    <span className="loading loading-ball loading-xl"></span>
+                    <h2 className="text-white font-light text-3xl mt-4">Loading YouTube...</h2>
                 </div>
             )}
             {playerData?.yt_vid_id && (

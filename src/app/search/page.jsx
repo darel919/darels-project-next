@@ -16,8 +16,9 @@ function SearchResults() {
       if (!query) return;
       
       try {
-        setError(null);
         setLoading(true);
+        setResults([]);
+        setError(null);
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/search?q=${encodeURIComponent(query)}`);
         if (response.status === 404) {
           setResults([]);
@@ -53,9 +54,7 @@ function SearchResults() {
   }
 
   return (
-    <div className="container min-h-[55vh] min-w-screen pt-16 px-4 sm:px-12 ">
-      {/* <h1 className="text-2xl font-bold mb-4">Search Results for "{query}"</h1> */}
-      
+    <div className="container min-h-[60vh] min-w-screen pt-16 px-4 sm:px-12">     
       {loading && (
         <div className="flex justify-center">
           <span className="loading loading-spinner loading-lg"></span>

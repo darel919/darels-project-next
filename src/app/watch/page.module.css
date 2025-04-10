@@ -33,6 +33,7 @@
         width: 100%;
         min-width: 100%;
         margin-top: 1rem;
+        /* margin-left:1rem; */
         transition: all 0.2s ease-in-out;
     }
 }
@@ -47,13 +48,14 @@
 
     .watchComp {
         width: 65%;
-        padding: 0 1rem 0 0;
+        /* padding: 0 1rem 0 0; */
         height: 100%;
     }
 
     .recommendationComp {
         width: 35%;
         margin-top: -10px;
+        margin-left:1rem;
         transition: all 0.2s ease-in-out;
     }
 }

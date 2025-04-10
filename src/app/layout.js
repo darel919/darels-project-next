@@ -1,10 +1,11 @@
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { Suspense } from 'react';
 
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-
+import Loading from './loading';
 
 export const metadata = {
   title: "darel's Projects",
@@ -33,7 +34,9 @@ export default function RootLayout({
       <body className="font-sans">
         <Navbar/>
         <main>
-          {children}
+          <Suspense fallback={<Loading />}>
+            {children}
+          </Suspense>
         </main>
         <Footer/>
       </body>

@@ -1,6 +1,9 @@
+import { Suspense } from 'react';
+import Loading from './loading';
 import LibraryItemViewer from '../components/LibraryItemViewer';
 import { getAllVideo } from '@/lib/api';
-export default async function Home() {
+
+async function Content() {
   let videoData = null;
   try {
     videoData = await getAllVideo();
@@ -19,5 +22,13 @@ export default async function Home() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <Content />
+    </Suspense>
   );
 }
