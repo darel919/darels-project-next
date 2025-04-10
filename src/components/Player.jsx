@@ -150,7 +150,7 @@ export default function Player({ playerData, className }) {
         return (
             <div 
                 ref={containerRef} 
-                className={className}
+                className={`${className} rounded-lg overflow-hidden`}
             ></div>
         );
     }

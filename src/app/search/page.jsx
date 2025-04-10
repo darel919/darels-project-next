@@ -24,15 +24,16 @@ function SearchResults() {
           return;
         }
         if (!response.ok) {
-          console.log('Response not OK:', response.statusText);
-          setError('Failed to fetch search results');
+          const errorText = await response.text();
+          console.log('Response not OK:', errorText);
+          setError(`Unable to search your query: ${errorText}` || 'Failed to fetch search results');
           setResults([]);
           return;
         }
         const data = await response.json();
         setResults(data.data);
       } catch (err) {
-        setError('Failed to fetch search results');
+        setError(err.message || 'Failed to fetch search results');
         console.error('Search error:', err);
       } finally {
         setLoading(false);
@@ -62,20 +63,20 @@ function SearchResults() {
       )}
 
       {error && (
-        <div className="alert alert-error my-8">
+        <div className="flex items-center mt-12 text-red-500">
           <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span>{error}</span>
+          <span className="ml-2 text-2xl">{error}</span>
         </div>
       )}
 
       {!loading && !error && results.length === 0 && (
-        <div className="flex items-center my-8">
+        <div className="flex items-center mt-12">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <span className="ml-2">No results found for your search "{query}"</span>
+          <span className="ml-2 text-xl">No results were found for your query <b>"{query}"</b></span>
         </div>
       )}
 

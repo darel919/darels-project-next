@@ -1,7 +1,7 @@
 .iframeComp {
-    border-radius:8px;
+    border-radius:12px;
 }
 .iframeComp iframe {
     border: none;
-    border-radius:8px;
+    border-radius:12px;
 }

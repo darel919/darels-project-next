@@ -79,10 +79,9 @@ export default async function WatchPage({ searchParams }) {
       <div className="w-full">
         <section className={styles.watchContainer}>
           <div className={styles.watchComp}>
-            <div className="mt-4">
-              <div className="bg-black relative" style={{ 
+            <div>
+              <div className="w-full" style={{ 
                 aspectRatio: '16/9',
-                width: '100%',
               }}>
                 <Player playerData={videoData} className="w-full h-full" />
               </div>
