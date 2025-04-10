@@ -1,10 +1,9 @@
 .libraryViewer {
-  padding: 1rem;
+  padding: 1rem 1rem 3rem 1rem;
 }
 
 .categoryHeader {
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 }
 
 .categoryHeader h1 {
@@ -14,6 +13,7 @@
 
 .categoryDescription {
   color: #898989;
+  padding-bottom: 1rem;
 }
 
 .videosGrid {

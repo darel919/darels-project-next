@@ -38,7 +38,7 @@ export default function VideoDescription({ videoData, description }) {
             {description}
           </p>
           {videoData.expand?.category?.[0] && (
-            <a href={`/category?list=${videoData.expand.category[0].id}`} className="card bg-base-100 hover:bg-base-300">
+            <a href={`/category?list=${videoData.expand.category[0].id}`} className="card bg-base-100 hover:bg-base-300 font-mono">
               <div className="card-body p-4">
                 <p className="opacity-[0.5]">This video is part of</p>
                 <h3 className="text-lg leading-none">{videoData.expand.category[0].title}</h3>

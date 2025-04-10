@@ -75,7 +75,7 @@ export default function WatchRecommendations({ videoId }) {
     };
 
     return (
-        <div className={styles.recommendationsContainer}>
+        <div className={`${styles.recommendationsContainer} font-mono`}>
             <div className="overflow-x-auto w-full">
                 <form className="filter flex-nowrap whitespace-nowrap" onReset={handleFormReset}>
                     <input className="btn btn-square" type="reset" value="×" />
@@ -110,7 +110,7 @@ export default function WatchRecommendations({ videoId }) {
                 <div className={styles.recommendationsList}>
                    {recommendations.map((video, index) => (
                         <div key={video.id || index} className={styles.recommendationItem}>
-                            <div className="flex flex-row gap-2">
+                            <div className="flex flex-row">
                                 <div className={styles.thumbnailWrapper}>
                                     <a href={`/watch?v=${video.id}`} className={styles.thumbnailLink}>
                                         <img

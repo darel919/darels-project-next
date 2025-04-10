@@ -53,8 +53,8 @@ export default function Navbar() {
                           onClick={() => document.getElementById('navbar-menu').checked = false}
                         >
                           <section>
-                            <h5 class="font-bold text-md">{category.title}</h5>
-                            <h6 class="text-xs">{category.desc}</h6>
+                            <h5 className="font-bold text-md">{category.title}</h5>
+                            <h6 className="text-xs">{category.desc}</h6>
                           </section>
                         </Link>
                       </li>

@@ -12,10 +12,10 @@ export default function LibraryItemViewer({ data }) {
   };
 
   return (
-    <div className={styles.libraryViewer}>
+    <div className={`${styles.libraryViewer} font-mono`}>
       {categoryInfo && (
         <div className={styles.categoryHeader}>
-          <h2 className="text-2xl font-bold">{categoryInfo.title}</h2>
+          <h1 className="text-4xl font-bold mb-4">{categoryInfo.title}</h1>
           {categoryInfo.description && (
             <p className={styles.categoryDescription}>{categoryInfo.description}</p>
           )}
@@ -30,7 +30,11 @@ export default function LibraryItemViewer({ data }) {
             <h2 className="text-xl">No videos available.</h2> }
           </div>
         ) : (
-          <div className={styles.videosGrid}>
+          <section>
+            <div className={styles.categoryDescription}>
+              <span>{videos.length} total videos</span>
+            </div>
+            <div className={styles.videosGrid}>
             {videos.map((video, index) => (
               <div key={video.id || index} className={styles.videoCard}>
                 <div className={styles.videoContent}>
@@ -64,6 +68,8 @@ export default function LibraryItemViewer({ data }) {
               </div>
             ))}
           </div>
+          </section>
+
         )}
       </div>
     </div>

@@ -80,8 +80,8 @@ export default async function WatchPage({ searchParams }) {
     : "No description for this video";
   
   return (
-          <section className="flex min-h-screen flex-col items-center pt-16 px-6 sm:p-24">
-        <div className="w-full max-w-5xl">
+      <section className="flex min-h-screen flex-col items-center pt-16 sm:pt-24 px-4 sm:px-12">
+        <div className="w-full">
           {error && (
             <div className="alert alert-error mb-4">
               <span>{error}</span>

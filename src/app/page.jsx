@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import LibraryItemViewer from '../components/LibraryItemViewer';
 import { getAllVideo } from '@/lib/api';
 export default async function Home() {
@@ -10,10 +9,10 @@ export default async function Home() {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-12">
+    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-4 sm:px-12">
       <div className="z-10 w-full items-center justify-between font-mono text-sm">
-        <p>Welcome to darel's Projects.</p>
-        <h1 className="text-4xl font-bold mb-4">Home</h1>
+        <p>Welcome to darel's Projects</p>
+        <h1 className="text-4xl font-bold mt-4">Home</h1>
         
         <div className="flex flex-col gap-4">
           <LibraryItemViewer data={videoData} />
