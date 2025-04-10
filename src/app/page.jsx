@@ -10,8 +10,8 @@ export default async function Home() {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-12">
+      <div className="z-10 w-full items-center justify-between font-mono text-sm">
         <p>Welcome to darel's Projects.</p>
         <h1 className="text-4xl font-bold mb-4">Home</h1>
         

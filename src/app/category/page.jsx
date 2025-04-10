@@ -46,11 +46,11 @@ export default async function CategoryPage({ searchParams }) {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm">
+    <section className="flex flex-col items-center justify-center pt-20 sm:pt-24 px-4 sm:px-12">
+      <div className="z-10 w-full min-h-screen items-center justify-between font-mono text-sm">
         <LibraryItemViewer data={categoryData} />
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}

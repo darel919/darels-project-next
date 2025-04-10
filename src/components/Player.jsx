@@ -37,14 +37,13 @@ export default function Player({ playerData, className }) {
                 setTimeout(() => window.close(), 3000);
                 return;
             }
-            
-            console.log("Using self-hosted mode with ArtPlayer");
+        
             setIsSelfMode(true);
             
             setTimeout(() => initializeArtPlayer(), 0);
         } 
         else if (playerData.yt_vid_id) {
-            console.log("Using YouTube iframe");
+
             setIsSelfMode(false);
         } 
         else {
@@ -58,7 +57,6 @@ export default function Player({ playerData, className }) {
 
         const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
         const thumbUrl = baseAPIEndpoint + '/thumb?id=' + playerData.id;
-        console.log(thumbUrl)
         const hlsUrl = baseAPIEndpoint.replace(/\/dp$/, '') + playerData.selfHostUrl;
 
         if (artRef.current) {
@@ -71,7 +69,7 @@ export default function Player({ playerData, className }) {
             url: hlsUrl,
             type: 'm3u8',
             autoplay: true,
-            volume: 0.5,
+            // volume: 0.5,
             isLive: false,
             muted: false,
             autoSize: false,
@@ -89,7 +87,7 @@ export default function Player({ playerData, className }) {
             miniProgressBar: true,
             mutex: true,
             backdrop: true,
-            playsInline: true,
+            playsInline: false,
             autoPlayback: true,
             airplay: true,
             autoOrientation: true,

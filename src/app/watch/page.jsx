@@ -80,7 +80,7 @@ export default async function WatchPage({ searchParams }) {
     : "No description for this video";
   
   return (
-          <section className="flex min-h-screen flex-col items-center p-24">
+          <section className="flex min-h-screen flex-col items-center pt-16 px-6 sm:p-24">
         <div className="w-full max-w-5xl">
           {error && (
             <div className="alert alert-error mb-4">
@@ -93,13 +93,13 @@ export default async function WatchPage({ searchParams }) {
               <section className={styles.watchContainer}>
                 <div className={styles.watchComp}>
                   <div className="mt-4">
-                    <div className="w-full bg-black relative" style={{ 
-                      minHeight: '400px',
-                      aspectRatio: '16/9'
+                    <div className="bg-black relative" style={{ 
+                      aspectRatio: '16/9',
+                      width: '100%',
                     }}>
                       <Player playerData={videoData} className="w-full h-full" />
                     </div>
-                    <h1 className="text-xl font-bold my-1">{videoData.title}</h1>
+                    <h1 className="text-xl font-bold mt-6 mb-4">{videoData.title}</h1>
                     
                     <WatchDescriptionViewer videoData={videoData} description={description}/>
                   </div>

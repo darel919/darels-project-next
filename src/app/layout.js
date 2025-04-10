@@ -1,8 +1,9 @@
-import { Inter } from 'next/font/google';
+import { Geist, Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 
-const inter = Inter({ subsets: ['latin'] });
+const geist = Geist({ subsets: ['latin'] });
 
 export const metadata = {
   title: "darel's Projects",
@@ -25,11 +26,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
+      <body className={geist.className}>
+        <Navbar/>
         <main>
           {children}
         </main>
+        <Footer/>
       </body>
     </html>
   );
