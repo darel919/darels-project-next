@@ -45,7 +45,7 @@ export default function LibraryItemViewer({ data }) {
                     </a>
                     <div className={styles.videoMeta}>
                       <span>{video.total_views || 'No'} views</span>
-                      {video.created && <span>{formatRelativeTime(video.created)}</span>}
+                      {video.created && <span title={new Date(video.created).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}>{formatRelativeTime(video.created)}</span>}
                     </div>
                     {video.expand && video.expand.category && video.expand.category[0] && (
                       <div className={styles.categoryLinkContainer}>
