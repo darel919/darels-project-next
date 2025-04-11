@@ -37,7 +37,6 @@ export default async function sitemap() {
                           "was", "were", "be", "been", "being", "have", "has", "had", 
                           "having", "do", "does", "did", "doing"]
 
-        // Dynamic routes from videos
         const videoRoutes = videos.map((video) => ({
             url: `https://projects.darelisme.my.id/watch?v=${video.id}`,
             lastModified: new Date(video.created),

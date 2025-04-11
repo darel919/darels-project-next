@@ -12,7 +12,7 @@ async function Content() {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-4 sm:px-12">
+    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-4 sm:px-10">
       <div className="z-10 w-full items-center justify-between font-mono text-sm">
         <p>Welcome to darel's Projects</p>
         <h1 className="text-4xl font-bold mt-4">Home</h1>

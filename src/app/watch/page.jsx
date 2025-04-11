@@ -104,7 +104,6 @@ export default async function WatchPage({ searchParams }) {
       </section>
     );
   } catch (error) {
-    // Redirect to not-found page for video not found errors
     notFound();
   }
 }

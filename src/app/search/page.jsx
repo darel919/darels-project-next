@@ -88,7 +88,7 @@ function SearchResults() {
   );
 }
 
-// SearchPage component with suspense boundary
+
 export default function SearchPage() {
   return (
     <Suspense fallback={

@@ -5,10 +5,13 @@ import Link from 'next/link';
 import SearchBar from './SearchBar';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
+import { useAuthStore } from "@/lib/authStore";
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [avatarError, setAvatarError] = useState(false);
+  const { userSession } = useAuthStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +34,16 @@ export default function Navbar() {
 
     fetchCategories();
   }, []);
+
+  const getInitials = (name) => {
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map(word => word[0])
+      .join("")
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   return (
     <div className="w-full h-16 fixed top-0 left-0 right-0 z-99">
@@ -91,13 +104,31 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* <div className="flex-none">
-          <button className="btn btn-ghost btn-circle avatar">
+        <div className="flex-none">
+          {userSession ? (<Link href="/profile" className="btn btn-ghost btn-circle avatar">
+          {!avatarError ? (
             <div className="w-10 rounded-full">
-              <img alt="User avatar" src="https://ui-avatars.com/api/?name=D&background=neutral&color=fff" />
+              <img 
+                src={userSession.user.user_metadata.avatar_url} 
+                alt={userSession.user.user_metadata.full_name}
+                onError={() => setAvatarError(true)} 
+              />
             </div>
-          </button>
-        </div> */}
+          ) : (
+            <div className="avatar avatar-placeholder">
+              <div className="bg-neutral text-neutral-content w-10 rounded-full">
+                <span className="text-xl">{getInitials(userSession.user.user_metadata.full_name)}</span>
+              </div>
+            </div>
+          )}
+          </Link>) : <Link href="/profile">
+            <div className="avatar avatar-placeholder">
+              <div className="bg-neutral text-neutral-content w-10 rounded-full">
+                <span className="text-xl">?</span>
+              </div>
+            </div>
+            </Link>}
+        </div>
       </div>
     </div>
   );
