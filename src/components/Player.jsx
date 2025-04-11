@@ -58,7 +58,6 @@ export default function Player({ playerData, className }) {
 
         const thumbUrl = baseAPIEndpoint + '/thumb?id=' + playerData.id;
         const hlsUrl = baseAPIEndpoint.replace(/\/dp$/, '') + playerData.selfHostUrl;
-        // console.log(baseAPIEndpoint, hlsUrl, thumbUrl)  
 
         if (artRef.current) {
             artRef.current.destroy();
@@ -132,7 +131,6 @@ export default function Player({ playerData, className }) {
             },
         });
 
-        // console.warn('Artplayer initialized:', artRef.current);
     };
 
     const handleIframeLoad = () => {
@@ -196,7 +194,7 @@ export default function Player({ playerData, className }) {
                     title="Player"
                     allowFullScreen
                     allow="autoplay"
-                    src={`${process.env.NEXT_PUBLIC_API_BASE_URL}/watch/ilink?v=${playerData.yt_vid_id}&useProxy=${useProxy}`}
+                    src={`${baseAPIEndpoint}/watch/ilink?v=${playerData.yt_vid_id}&useProxy=${useProxy}`}
                 />
             )}
         </div>
