@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './WatchRecommendations.module.css';
@@ -110,33 +111,37 @@ export default function WatchRecommendations({ videoId }) {
                 <div className={styles.recommendationsList}>
                    {recommendations.map((video, index) => (
                         <div key={video.id || index} className={styles.recommendationItem}>
-                            <div className="flex flex-row">
+                            <div className="flex flex-row" title={video.desc}>
                                 <div className={styles.thumbnailWrapper}>
-                                    <a href={`/watch?v=${video.id}`} className={styles.thumbnailLink}>
+                                    <Link href={`/watch?v=${video.id}`} className={styles.thumbnailLink}>
                                         <img
                                             src={getThumbnailUrl(video.id)}
                                             alt={video.title}
                                             className={styles.videoThumbnail}
                                             loading="lazy"
                                         />
-                                    </a>
+                                    </Link>
                                 </div>
 
                                 <div className={styles.videoInfo}>
-                                    <a href={`/watch?v=${video.id}`} className={styles.titleLink}>
+                                    <Link href={`/watch?v=${video.id}`} className={styles.titleLink}>
                                         <h3 className={styles.videoTitle}>{video.title}</h3>
-                                    </a>
+                                    </Link>
                                     
                                     <div className={styles.videoMeta}>
                                         <span>{video.total_views || 'No'} views</span>
-                                        {video.created && <span>{formatRelativeTime(video.created)}</span>}
+                                        {video.created && (
+                                            <span title={new Date(video.created).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}>
+                                                {formatRelativeTime(video.created)}
+                                            </span>
+                                        )}
                                     </div>
                                     
                                     {video.expand?.category?.[0] && (
-                                        <div className={styles.categoryLink}>
-                                            <a href={`/category?list=${video.expand.category[0].id}`}>
+                                        <div className={styles.categoryLink} title={video.expand.category[0].desc}>
+                                            <Link href={`/category?list=${video.expand.category[0].id}`}>
                                                 {video.expand.category[0].title}
-                                            </a>
+                                            </Link>
                                         </div>
                                     )}
                                 </div>

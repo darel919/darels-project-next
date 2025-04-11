@@ -47,24 +47,24 @@ export default function Navbar() {
             </div>
             <div className="drawer-side z-[100] left-0">
               <label htmlFor="navbar-menu" aria-label="close sidebar" className="drawer-overlay"></label>
-              <ul className="menu p-4 w-80 h-full min-h-full bg-base-100">
+              <ul className="menu p-4 w-80 h-full min-h-full bg-secondary">
                 <li>
-                  <Link href="/" onClick={() => document.getElementById('navbar-menu').checked = false}>Home</Link>
+                  <Link href="/" className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>Home</Link>
                 </li>
                 <li>
-                  <Link href="/categories">
-                    <summary>Categories</summary>
+                  <Link href="/categories" title={"Show all categories"} onClick={() => document.getElementById('navbar-menu').checked = false} className='mb-1'>
+                    <summary className='text-lg'>Categories</summary>
                   </Link>
                   <ul>
                     {categories.map((category) => (
-                      <li key={category.id}>
+                      <li key={category.id} title={category.desc}>
                         <Link 
                           href={`/category?list=${category.id}`}
                           onClick={() => document.getElementById('navbar-menu').checked = false}
                         >
                           <section>
-                            <h5 className="font-bold text-md">{category.title}</h5>
-                            <h6 className="text-xs">{category.desc}</h6>
+                            <h5 className="font-semilight font-mono text-lg">{category.title}</h5>
+                            {/* <h6 className="text-xs">{category.desc}</h6> */}
                           </section>
                         </Link>
                       </li>

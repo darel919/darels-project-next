@@ -33,6 +33,7 @@
         width: 100%;
         min-width: 100%;
         margin-top: 1rem;
+        margin-bottom: 1rem;;
         /* margin-left:1rem; */
         transition: all 0.2s ease-in-out;
     }
@@ -47,20 +48,16 @@
     }
 
     .watchComp {
-        width: 65%;
+        width: 64%;
         /* padding: 0 1rem 0 0; */
         height: 100%;
     }
 
     .recommendationComp {
-        width: 35%;
+        width: 36%;
         margin-top: -10px;
         margin-left:1rem;
+        margin-bottom: 1rem;
         transition: all 0.2s ease-in-out;
     }
-}
-
-/* Remove the conflicting media query that was causing issues */
-@media (max-width: 1024px) and (min-width: 769px) {
-    /* removing this style as it was causing the recommendationComp to take too much space */
 }

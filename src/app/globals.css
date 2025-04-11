@@ -52,7 +52,7 @@ body {
 }
 
 a {
-  text-decoration: none;
+  /* text-decoration: none; */
   color: inherit;
 }
 
@@ -64,7 +64,7 @@ a {
 
     /* Dark mode colors */
     --color-primary: #1f2937;
-    --color-secondary: #111827;
+    --color-secondary: #13151b;
     --color-accent: #60a5fa;
     --color-text: #f9fafb;
     --color-text-secondary: #d1d5db;

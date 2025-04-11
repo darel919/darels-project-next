@@ -183,7 +183,7 @@ export default function Player({ playerData, className }) {
                         />
                     )}
                     <span className="loading loading-ball loading-xl"></span>
-                    <h2 className="text-white font-light text-3xl mt-4">Loading YouTube...</h2>
+                    <h2 className="text-base-content font-light text-3xl mt-4">Loading...</h2>
                 </div>
             )}
             {playerData?.yt_vid_id && (

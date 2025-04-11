@@ -13,15 +13,6 @@ export default function LibraryItemViewer({ data }) {
 
   return (
     <div className={`${styles.libraryViewer} font-mono`}>
-      {categoryInfo && (
-        <div className={styles.categoryHeader}>
-          <h1 className="text-4xl font-bold mb-4">{categoryInfo.title}</h1>
-          {categoryInfo.description && (
-            <p className={styles.categoryDescription}>{categoryInfo.description}</p>
-          )}
-        </div>
-      )}
-
       <div className="videos-container">
         {videos.length === 0 ? (
           <div className={styles.noVideos}>

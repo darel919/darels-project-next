@@ -5,6 +5,7 @@ import { getVideoData } from '@/lib/api';
 import Player from '../../components/Player';
 import Recommendation from '../../components/WatchRecommendations';
 import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
+import ShareButton from '../../components/ShareButton';
 import styles from './page.module.css';
 
 export async function generateMetadata({ searchParams }) {
@@ -54,8 +55,6 @@ export async function generateMetadata({ searchParams }) {
   } catch (error) {
     console.error('Error fetching video data:', error);
   }
-
-
 }
 
 export default async function WatchPage({ searchParams }) {
@@ -76,9 +75,11 @@ export default async function WatchPage({ searchParams }) {
     const description = videoData?.description || videoData?.desc 
       ? (videoData.description || videoData.desc) 
       : "No description for this video";
+
+    const currentUrl = `https://projects.darelisme.my.id/watch?v=${videoId}`;
     
     return (
-      <section className="flex min-h-screen flex-col items-center pt-16 sm:pt-24 px-4 sm:px-12">
+      <section className="flex min-h-[55vh] flex-col items-center pt-16 sm:pt-24 mx-4 sm:ml-10 mr-0 sm:mr-8">
         <div className="w-full">
           <section className={styles.watchContainer}>
             <div className={styles.watchComp}>
@@ -88,8 +89,10 @@ export default async function WatchPage({ searchParams }) {
                 }}>
                   <Player playerData={videoData} className="w-full h-full" />
                 </div>
-                <h1 className="text-xl font-bold mt-6 mb-4">{videoData.title}</h1>
-                
+                <h1 className="text-2xl font-bold mt-7 mb-4">{videoData.title}</h1>
+                <section className='w-full mb-4'>
+                  <ShareButton title={videoData.title} url={currentUrl} />
+                </section>
                 <WatchDescriptionViewer videoData={videoData} description={description}/>
               </div>
             </div>
