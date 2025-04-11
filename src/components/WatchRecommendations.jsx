@@ -49,16 +49,31 @@ export default function WatchRecommendations({ videoId }) {
     }, []);
 
     const getCategoryTitle = () => {
-        if (recommendationData.same_category.info) {
-            return recommendationData.same_category.info.title
+        if (recommendationData.same_category?.info) {
+            return recommendationData.same_category.info.title;
         }
+        return '';
     };
 
     const categoryTitle = getCategoryTitle();
 
-    const recommendations = selectedCategory 
-        ? Array.isArray(recommendationData[selectedCategory]) ? recommendationData[selectedCategory] : []
-        : Array.isArray(recommendationData.unique) ? recommendationData.unique : [];
+    const getRecommendationVideos = () => {
+        if (!selectedCategory) {
+            return Array.isArray(recommendationData.unique) ? recommendationData.unique : [];
+        }
+        
+        if (selectedCategory === 'same_category') {
+            return Array.isArray(recommendationData.same_category?.videos) 
+                ? recommendationData.same_category.videos 
+                : [];
+        }
+        
+        return Array.isArray(recommendationData[selectedCategory]) 
+            ? recommendationData[selectedCategory] 
+            : [];
+    };
+
+    const recommendations = getRecommendationVideos();
 
     const handleRadioChange = (e) => {
         if (e.target.checked) {

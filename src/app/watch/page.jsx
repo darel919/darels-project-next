@@ -79,7 +79,7 @@ export default async function WatchPage({ searchParams }) {
     const currentUrl = `https://projects.darelisme.my.id/watch?v=${videoId}`;
     
     return (
-      <section className="flex min-h-[55vh] flex-col items-center pt-16 sm:pt-24 mx-4 sm:ml-10 mr-0 sm:mr-8 mb-8">
+      <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
         <div className="w-full">
           <section className={styles.watchContainer}>
             <div className={styles.watchComp}>
