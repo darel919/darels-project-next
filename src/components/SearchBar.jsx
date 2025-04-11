@@ -19,7 +19,6 @@ export default function SearchBar() {
     setIsClient(true);
   }, []);
 
-  // Server-side rendering placeholder
   if (!isClient) {
     return (
       <div className="w-full relative">

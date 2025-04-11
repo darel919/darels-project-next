@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Loading from './loading';
 import LibraryItemViewer from '../components/LibraryItemViewer';
 import { getAllVideo } from '@/lib/api';
+import HomeGreetings from '@/components/HomeGreetings';
 
 async function Content() {
   let videoData = null;
@@ -12,16 +13,19 @@ async function Content() {
   }
 
   return (
-    <section className="flex min-h-screen flex-col items-center justify-center pt-24 px-4 sm:px-10">
-      <div className="z-10 w-full items-center justify-between font-mono text-sm">
-        <p>Welcome to darel's Projects</p>
-        <h1 className="text-4xl font-bold mt-4">Home</h1>
-        
-        <div className="flex flex-col gap-4">
-          <LibraryItemViewer data={videoData} />
-        </div>
-      </div>
-    </section>
+    <>
+      {videoData && videoData.length > 0 ? (
+        <section className="flex flex-col items-center justify-center pt-20 px-8 sm:px-10">
+          <div className="z-10 w-full items-center justify-between font-mono text-sm">
+            <HomeGreetings/>
+            <h1 className="text-4xl font-bold mt-8">Home</h1>
+            <div className="flex flex-col">
+              <LibraryItemViewer data={videoData} />
+            </div>
+          </div>
+        </section>
+      ) : null}
+    </>
   );
 }
 

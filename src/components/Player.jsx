@@ -19,11 +19,6 @@ export default function Player({ playerData, className }) {
 
     const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-    useEffect(() => {
-        if (playerData?.yt_vid_id) {
-            setBgUrl(`${baseAPIEndpoint}/thumb?id=${playerData.yt_vid_id}`);
-        }
-    }, [playerData?.yt_vid_id]);
 
     useEffect(() => {
         if (!playerData) return;
@@ -39,6 +34,7 @@ export default function Player({ playerData, className }) {
         else if (playerData.yt_vid_id) {
             setIsSelfMode(false);
             setLoadingIframe(true);
+            setBgUrl(`${baseAPIEndpoint}/thumb?id=${playerData.id}`);
         } 
         else {
             setErrorMsg("No valid playback source available.");
@@ -139,7 +135,7 @@ export default function Player({ playerData, className }) {
 
     if (isInitializing || isSelfMode === null) {
         return (
-            <div className="w-full h-full flex justify-center items-center bg-base-300">
+            <div className="w-full h-full flex justify-center items-center">
                 <div className="flex flex-col items-center">
                     <span className="loading loading-ball loading-xl"></span>
                     <h2 className="text-base-content font-light text-3xl mt-4">Loading iPlayer</h2>
@@ -172,28 +168,40 @@ export default function Player({ playerData, className }) {
     }
 
     return (
-        <div id="iframe" className={`w-full h-full flex justify-center items-center bg-base-300 bg-opacity-35 ${styles.iframeComp}`}>
+        <div id="iframe" className={`w-full h-full flex justify-center items-center ${styles.iframeComp}`}
+            style={loadingIframe && bgUrl ? { 
+                backgroundImage: `url(${bgUrl})`, 
+                backgroundSize: 'cover', 
+                backgroundPosition: 'center',
+                backdropFilter: 'blur(4px)',
+                WebkitBackdropFilter: 'blur(4px)',
+                position: 'relative',
+                transition: 'all 0.3s ease'
+            } : {}}>
+            {loadingIframe && bgUrl && <div className="absolute inset-0" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                backdropFilter: 'blur(5px)',
+                WebkitBackdropFilter: 'blur(5px)',
+                borderRadius: '0.5rem',
+            }}></div>}
             {loadingIframe && (
-                <div className="flex flex-col items-center">
-                    {bgUrl && (
-                        <img 
-                            src={bgUrl} 
-                            alt="Video thumbnail" 
-                            className="absolute inset-0 w-full h-full object-cover z-[-1]" 
-                        />
-                    )}
-                    <span className="loading loading-ball loading-xl"></span>
-                    <h2 className="text-base-content font-light text-3xl mt-4">Loading...</h2>
+                <div className="absolute inset-0 flex flex-col items-center justify-center z-10 rounded-lg">
+                    <div className="p-6 rounded-lg flex flex-col items-center text-primary-content">
+                        <span className="loading loading-ball loading-xl"></span>
+                        <h2 className="font-light text-3xl mt-4 text-center">Loading...</h2>
+                    </div>
                 </div>
             )}
             {playerData?.yt_vid_id && (
                 <iframe 
-                    className={`w-full h-full ${loadingIframe ? 'hidden' : ''}`}
+                    className={`w-full h-full ${loadingIframe ? 'opacity-0' : 'opacity-100'} relative z-10 rounded-lg`}
+                    style={{ transition: 'opacity 0.5s ease-in-out' }}
                     onLoad={handleIframeLoad}
                     loading="eager"
                     title="Player"
                     allowFullScreen
                     allow="autoplay"
+                    type="text/html"
                     src={`${baseAPIEndpoint}/watch/ilink?v=${playerData.yt_vid_id}&useProxy=${useProxy}`}
                 />
             )}

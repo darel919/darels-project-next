@@ -87,34 +87,46 @@ export default function WatchRecommendations({ videoId }) {
 
     return (
         <div className={`${styles.recommendationsContainer} font-mono`}>
-            <div className="overflow-x-auto w-full">
-                <form className="filter flex-nowrap whitespace-nowrap" onReset={handleFormReset}>
-                    <input className="btn btn-square" type="reset" value="×" />
-                    <input
-                        className="btn"
-                        type="radio"
-                        name="recommendation_type"
-                        aria-label="For You"
-                        value="unique"
-                        checked={selectedCategory === 'unique'}
-                        onChange={handleRadioChange}
-                    />
-                    {recommendationData.same_category.info && (
+            {!pending ? (
+                <div className="overflow-x-auto w-full mb-6">
+                    <form className="filter" onReset={handleFormReset}>
+                        <input 
+                            className="btn btn-square filter-reset" 
+                            type="radio" 
+                            name="recommendation_type" 
+                            aria-label="×" 
+                            checked={selectedCategory === null}
+                            onChange={() => setSelectedCategory(null)}
+                        />
                         <input
                             className="btn"
                             type="radio"
                             name="recommendation_type"
-                            aria-label={categoryTitle}
-                            value="same_category"
-                            checked={selectedCategory === 'same_category'}
+                            aria-label="For You"
+                            value="unique"
+                            checked={selectedCategory === 'unique'}
                             onChange={handleRadioChange}
                         />
-                    )}
-                </form>
-            </div>
+                        {recommendationData.same_category.info && (
+                            <input
+                                className="btn"
+                                type="radio"
+                                name="recommendation_type"
+                                aria-label={categoryTitle}
+                                value="same_category"
+                                checked={selectedCategory === 'same_category'}
+                                onChange={handleRadioChange}
+                            />
+                        )}
+                    </form>
+                </div>
+            ) : null}
 
             {pending ? (
-                <div className={styles.loading}>Loading recommendations...</div>
+                <div className={`${styles.loading} flex flex-col items-center`}>
+                    <div className="loading loading-ball loading-2xl" />
+                    <p className='mt-4 text-lg'>Loading recommendations...</p>
+                </div>
             ) : recommendations.length === 0 ? (
                 <div className={styles.noRecommendations}>
                     <p>No recommendations available.</p>

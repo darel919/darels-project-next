@@ -6,6 +6,7 @@ import Player from '../../components/Player';
 import Recommendation from '../../components/WatchRecommendations';
 import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
 import ShareButton from '../../components/ShareButton';
+import ScrollToTop from '../../components/ScrollToTop';
 import styles from './page.module.css';
 
 export async function generateMetadata({ searchParams }) {
@@ -62,7 +63,7 @@ export default async function WatchPage({ searchParams }) {
   const videoId = params.v;
   
   if (!videoId) {
-    notFound(); // Use Next.js built-in not-found instead of throwing error
+    notFound();
   }
 
   try {
@@ -80,6 +81,7 @@ export default async function WatchPage({ searchParams }) {
     
     return (
       <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
+        <ScrollToTop videoId={videoId} />
         <div className="w-full">
           <section className={styles.watchContainer}>
             <div className={styles.watchComp}>
