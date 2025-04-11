@@ -58,7 +58,7 @@ export default async function CategoryPage({ searchParams }) {
       </div>
 
         <h1 className="text-4xl font-bold mb-2">{categoryData.category.title}</h1>
-        <p className="mb-8">{categoryData.category.description}</p>
+        <p className="mb-2">{categoryData.category.description}</p>
         <LibraryItemViewer data={categoryData} />
         {error && (
           <div className="border border-red-400 text-red-700 px-4 py-3 rounded mb-4">

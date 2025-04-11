@@ -49,14 +49,9 @@ export default function WatchRecommendations({ videoId }) {
     }, []);
 
     const getCategoryTitle = () => {
-        if (recommendationData.unique && 
-            recommendationData.unique[0] && 
-            recommendationData.unique[0].expand && 
-            recommendationData.unique[0].expand.category && 
-            recommendationData.unique[0].expand.category[0]) {
-            return "More from "+ recommendationData.unique[0].expand.category[0].title;
+        if (recommendationData.same_category.info) {
+            return recommendationData.same_category.info.title
         }
-        return 'Category';
     };
 
     const categoryTitle = getCategoryTitle();
@@ -89,15 +84,17 @@ export default function WatchRecommendations({ videoId }) {
                         checked={selectedCategory === 'unique'}
                         onChange={handleRadioChange}
                     />
-                    <input
-                        className="btn"
-                        type="radio"
-                        name="recommendation_type" 
-                        aria-label={categoryTitle}
-                        value="same_category"
-                        checked={selectedCategory === 'same_category'}
-                        onChange={handleRadioChange}
-                    />
+                    {recommendationData.same_category.info && (
+                        <input
+                            className="btn"
+                            type="radio"
+                            name="recommendation_type"
+                            aria-label={categoryTitle}
+                            value="same_category"
+                            checked={selectedCategory === 'same_category'}
+                            onChange={handleRadioChange}
+                        />
+                    )}
                 </form>
             </div>
 

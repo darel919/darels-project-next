@@ -49,7 +49,7 @@ export default function DashboardPage() {
                 <h2 className="font-bold">Logged in as:</h2>
                 <div className="mt-4 avatar flex items-center">
                   {!avatarError ? (
-                    <div className="w-20 rounded-full">
+                    <div className="rounded-full">
                       <img 
                         src={userSession.user.user_metadata.avatar_url} 
                         alt={userSession.user.user_metadata.full_name}
@@ -58,7 +58,7 @@ export default function DashboardPage() {
                     </div>
                   ) : (
                     <div className="avatar avatar-placeholder">
-                      <div className="bg-neutral text-neutral-content w-20 rounded-full">
+                      <div className="bg-neutral text-neutral-content p-4 rounded-full">
                         <span className="text-xl">{getInitials(userSession.user.user_metadata.full_name)}</span>
                       </div>
                     </div>

@@ -117,16 +117,19 @@ export default function Navbar() {
           ) : (
             <div className="avatar avatar-placeholder">
               <div className="bg-neutral text-neutral-content w-10 rounded-full">
-                <span className="text-xl">{getInitials(userSession.user.user_metadata.full_name)}</span>
+                <span className="text-md p-2">{getInitials(userSession.user.user_metadata.full_name)}</span>
               </div>
             </div>
           )}
-          </Link>) : <Link href="/profile">
-            <div className="avatar avatar-placeholder">
-              <div className="bg-neutral text-neutral-content w-10 rounded-full">
-                <span className="text-xl">?</span>
+          </Link>) : <Link className='btn btn-ghost rounded avatar' href="/auth/login">
+            <button className='flex items-center'>
+              <div className="avatar avatar-placeholder">
+                <div className="bg-neutral text-neutral-content w-10 rounded-full">
+                  <span className="text-xl">?</span>
+                </div>
               </div>
-            </div>
+              <p className='ml-3 text-xs font-bold'>Sign in</p>
+            </button>
             </Link>}
         </div>
       </div>

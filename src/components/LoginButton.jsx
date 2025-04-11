@@ -62,7 +62,9 @@ export default function LoginButton() {
       if (event.origin === window.location.origin && 
           event.data && event.data.type === 'AUTH_SUCCESS') {
         setIsLoggingIn(false);
-        window.location.reload();
+        setTimeout(() => {
+          window.location.reload();
+        },250)
       }
     };
     
