@@ -3,21 +3,27 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSearchStore } from '@/lib/searchStore';
 
 export default function SearchBar() {
   const [isClient, setIsClient] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [error, setError] = useState(null);
-  const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const timeoutRef = useRef(null);
   const searchRef = useRef(null);
+  
+  const { searchQuery, setSearchQuery } = useSearchStore();
 
   useEffect(() => {
     setIsClient(true);
-
+    const params = new URLSearchParams(window.location.search);
+    const queryParam = params.get('q');
+    if (queryParam) {
+      setSearchQuery(queryParam);
+    }
     const handleClickOutside = (event) => {
       if (searchRef.current && !searchRef.current.contains(event.target)) {
         setShowDropdown(false);
@@ -28,7 +34,7 @@ export default function SearchBar() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, []);
+  }, [setSearchQuery]);
 
   if (!isClient) {
     return (
@@ -39,7 +45,7 @@ export default function SearchBar() {
               type="text"
               placeholder="Search"
               className="input pl-6 input-bordered w-full rounded-full"
-              value=""
+              value={searchQuery || ""}
               disabled
             />
           </div>

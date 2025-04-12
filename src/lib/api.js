@@ -1,6 +1,8 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const LOCAL_API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL || API_BASE_URL;
 
+export { API_BASE_URL, LOCAL_API_BASE_URL };
+
 export async function serverFetch(endpoint, options = {}) {
   const url = `${LOCAL_API_BASE_URL}${endpoint}`;
   
@@ -46,6 +48,20 @@ export async function getVideoData(id) {
       throw new Error("Unable to connect to the video server. Please check your internet connection or try again later.");
     }
     throw error;
+  }
+}
+
+export async function searchVideos(query) {
+  try {
+    const response = await serverFetch(`/search?q=${encodeURIComponent(query)}`, {
+      next: { revalidate: 60 }
+    });
+    const results = response && response.data ? response.data : [];
+    
+    return Array.isArray(results) ? results : [];
+  } catch (error) {
+    console.error("Search error:", error);
+    return [];
   }
 }
 

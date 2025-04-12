@@ -32,8 +32,8 @@ export default function ErrorState({ message, actionText = "Return to Home", act
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
         <div className="flex flex-col ml-0 sm:ml-4">
-          <span className="ml-0 sm:ml-2 py-6 font-light text-4xl sm:text-3xl">{message}</span>
-          {actionDesc && <p className="ml-0 sm:ml-2 text-base text-base-content/80">{actionDesc}</p>}
+          <span className="my-4 sm:my-0 font-light text-4xl">{message}</span>
+          {actionDesc && <p className="mt-2 text-md">{actionDesc}</p>}
         </div>
       </div>
       <button onClick={handleAction} className="btn btn-primary mt-4 sm:mt-6">

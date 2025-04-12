@@ -9,6 +9,7 @@ import { useAuthStore } from "@/lib/authStore";
 
 export default function Navbar() {
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [avatarError, setAvatarError] = useState(false);
   const { userSession } = useAuthStore();
@@ -23,12 +24,16 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
+    setIsLoading(true);
     async function fetchCategories() {
+
       try {
         const data = await getAllCategoriesData();
         setCategories(data);
+        setIsLoading(false);
       } catch (err) {
         console.error('Failed to fetch categories:', err);
+        setIsLoading(false);
       }
     }
 
@@ -46,7 +51,7 @@ export default function Navbar() {
   };
 
   return (
-    <div className="w-full h-16 fixed top-0 left-0 right-0 z-99">
+    <div className="w-full h-16 fixed top-0 left-0 right-0 z-[99]">
       <div className={`navbar min-h-16 h-full transition-colors duration-200 ${isScrolled ? 'bg-secondary shadow-md' : 'bg-transparent'} px-2 sm:px-6`}>
         <div className="flex-none flex items-center">
           <div className="drawer">
@@ -60,30 +65,48 @@ export default function Navbar() {
             </div>
             <div className="drawer-side z-[100] left-0">
               <label htmlFor="navbar-menu" aria-label="close sidebar" className="drawer-overlay"></label>
-              <ul className="menu p-4 w-80 h-full min-h-full bg-secondary">
+              <ul className="menu p-4 w-80 min-h-full bg-secondary">
                 <li>
                   <Link href="/" className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>Home</Link>
                 </li>
-                <li>
-                  <Link href="/categories" title={"Show all categories"} onClick={() => document.getElementById('navbar-menu').checked = false} className='mb-1'>
-                    <summary className='text-lg'>Categories</summary>
-                  </Link>
-                  <ul>
-                    {categories.map((category) => (
-                      <li key={category.id} title={category.desc}>
-                        <Link 
-                          href={`/category?list=${category.id}`}
-                          onClick={() => document.getElementById('navbar-menu').checked = false}
-                        >
+                {isLoading ? (
+                  <div className="loading loading-spinner loading-lg ml-4 mt-4"></div>
+                ) : (
+                  <li>
+                    <Link href="/categories" title={"Show all categories"} onClick={() => document.getElementById('navbar-menu').checked = false} className='mb-1'>
+                      <summary className='text-lg'>Categories</summary>
+                    </Link>
+                    {categories.length > 1 && (
+                      <ul>
+                        {categories.map((category) => (
+                          <li key={category.id}>
+                            <Link href={`/category?list=${category.id}`} onClick={() => document.getElementById('navbar-menu').checked = false} title={category.desc}>
+                              <section>
+                                <h5 className="font-semilight font-mono text-lg">{category.title}</h5>
+                              </section>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                )}
+                {userSession && (
+                  <li>
+                    <Link href="/manage"  onClick={() => document.getElementById('navbar-menu').checked = false}>
+                      <summary className='text-lg'>Manage</summary>
+                    </Link>
+                    <ul>
+                      <li>
+                        <Link href="/manage/upload"  className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>
                           <section>
-                            <h5 className="font-semilight font-mono text-lg">{category.title}</h5>
-                            {/* <h6 className="text-xs">{category.desc}</h6> */}
+                            <h5 className="font-semilight font-mono text-lg">Upload</h5>
                           </section>
                         </Link>
                       </li>
-                    ))}
-                  </ul>
-                </li>
+                    </ul>
+                  </li>
+                )}
               </ul>
             </div>
           </div>
@@ -108,10 +131,10 @@ export default function Navbar() {
           {userSession ? (<Link href="/profile" className="btn btn-ghost btn-circle avatar">
           {!avatarError ? (
             <div className="w-10 rounded-full">
-              <img 
-                src={userSession.user.user_metadata.avatar_url} 
+              <img
+                src={userSession.user.user_metadata.avatar_url}
                 alt={userSession.user.user_metadata.full_name}
-                onError={() => setAvatarError(true)} 
+                onError={() => setAvatarError(true)}
               />
             </div>
           ) : (
