@@ -2,16 +2,15 @@
 
 import { getAllCategoriesData } from "@/lib/api";
 import Link from "next/link";
+import ErrorState from "@/components/ErrorState";
 
 export async function generateMetadata() {
   return {
     title: `Showing all categories - darel's Projects`,
   };
-
 }
 
 export default async function CategoryPage() {
-
   let categoryData = null;
   let error = null;
 
@@ -19,6 +18,14 @@ export default async function CategoryPage() {
     categoryData = await getAllCategoriesData();
   } catch (err) {
     error = err.message;
+  }
+
+  if (error) {
+    return <ErrorState 
+      message="Currently, categories are unavailable" 
+      actionDesc="We are having trouble loading the categories. Please try again later."
+      action="home" 
+    />;
   }
 
   return (
@@ -41,12 +48,6 @@ export default async function CategoryPage() {
           </Link>
         ))) : (
           <div className="text-center text-gray-500">No categories available</div>
-        )}
-
-        {error && (
-          <div className="border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
         )}
       </div>
     </section>

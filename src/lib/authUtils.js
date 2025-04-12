@@ -15,22 +15,17 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
   const loginWindow = window.open(authUrl, 'darelismeLogin', 'width=600,height=700');
   
   if (!loginWindow) {
-
     alert("Please allow popups for this site to enable login");
     if (onAuthCancelled) onAuthCancelled("Popup was blocked");
     return false;
   }
   
-
   let authDetected = false;
   
-
   const checkWindowClosed = setInterval(() => {
-
     if (authDetected) return;
     
     try {
-
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
       if (isAuthenticated) {
         console.log("Authentication detected via store check");
@@ -47,11 +42,9 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
         return;
       }
       
-
       if (loginWindow.closed) {
         clearInterval(checkWindowClosed);
         
-
         const finalAuthCheck = useAuthStore.getState().isAuthenticated;
         const finalStorageCheck = localStorage.getItem('authSuccess') === 'true';
         
@@ -60,7 +53,6 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
           localStorage.removeItem('authSuccess');
           authDetected = true;
         } else {
-
           console.log("Login window was closed without completing authentication");
           sessionStorage.setItem("authCancelled", "true");
           if (onAuthCancelled) onAuthCancelled("Login window was closed");
@@ -75,7 +67,6 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
 }
 
 export function redirectToLogin(currentPath) {
-
   localStorage.setItem("redirectAfterAuth", currentPath);
   sessionStorage.removeItem("redirectionCompleted");
   const redirectUrl = encodeURIComponent(`${window.location.origin}/auth`);

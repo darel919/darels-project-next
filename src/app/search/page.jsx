@@ -1,5 +1,6 @@
 import LibraryItemViewer from '@/components/LibraryItemViewer';
 import { Suspense } from 'react';
+import ErrorState from '@/components/ErrorState';
 
 export function generateMetadata({ searchParams }) {
   const query = searchParams.q || '';
@@ -21,28 +22,27 @@ async function getSearchResults(query) {
     }
     
     if (!response.ok) {
-      const errorText = await response.text();
-      console.log('Response not OK:', errorText);
-      return { 
-        results: [], 
-        error: `Unable to search your query: ${errorText}` || 'Failed to fetch search results'
-      };
+      return { results: [], error: true };
     }
     
     const data = await response.json();
     return { results: data.data, error: null };
   } catch (err) {
-    console.error('Search error:', err);
-    return { 
-      results: [], 
-      error: err.message || 'Failed to fetch search results'
-    };
+    return { results: [], error: true };
   }
 }
 
 async function SearchResults({ query }) {
   const { results, error } = await getSearchResults(query);
   
+  if (error) {
+    return <ErrorState 
+      message="Currently, search feature is unavailable." 
+      actionDesc="We are having trouble with the search functionality. Please try again later."
+      action="home"
+    />;
+  }
+
   if (!query) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh]">
@@ -54,15 +54,6 @@ async function SearchResults({ query }) {
 
   return (
     <div className="container min-h-[60vh] min-w-screen pt-16 px-6 sm:px-12">     
-      {error && (
-        <div className="flex items-center mt-12 text-red-500">
-          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span className="ml-2 text-2xl">{error}</span>
-        </div>
-      )}
-
       {!error && results.length === 0 && (
         <div className="flex items-center mt-12">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">

@@ -8,6 +8,7 @@ import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
 import ShareButton from '../../components/ShareButton';
 import ScrollToTop from '../../components/ScrollToTop';
 import styles from './page.module.css';
+import ErrorState from '@/components/ErrorState';
 
 export async function generateMetadata({ searchParams }) {
   const baseURL = 'https://api.darelisme.my.id/dp';
@@ -66,46 +67,51 @@ export default async function WatchPage({ searchParams }) {
     notFound();
   }
 
+  let videoData = null;
   try {
-    const videoData = await getVideoData(videoId);
-    
-    if (!videoData.yt_vid_id && videoId) {
-      videoData.yt_vid_id = videoId;
-    }
-    
-    const description = videoData?.description || videoData?.desc 
-      ? (videoData.description || videoData.desc) 
-      : "No description for this video";
-
-    const currentUrl = `https://projects.darelisme.my.id/watch?v=${videoId}`;
-    
-    return (
-      <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
-        <ScrollToTop videoId={videoId} />
-        <div className="w-full">
-          <section className={styles.watchContainer}>
-            <div className={styles.watchComp}>
-              <div>
-                <div className="w-full" style={{ 
-                  aspectRatio: '16/9',
-                }}>
-                  <Player playerData={videoData} className="w-full h-full" />
-                </div>
-                <h1 className="text-2xl font-bold mt-7 mb-4">{videoData.title}</h1>
-                <section className='w-full mb-4'>
-                  <ShareButton title={videoData.title} url={currentUrl} />
-                </section>
-                <WatchDescriptionViewer videoData={videoData} description={description}/>
-              </div>
-            </div>
-            <div className={styles.recommendationComp}>
-              <Recommendation videoId={videoId} />
-            </div>
-          </section>
-        </div>
-      </section>
-    );
+    videoData = await getVideoData(videoId);
   } catch (error) {
-    notFound();
+    return <ErrorState 
+      message="This video is currently unavailable" 
+      actionDesc="We couldn't load this video. It might have been removed or there might be a temporary issue."
+      action="home"
+    />;
   }
+    
+  if (!videoData.yt_vid_id && videoId) {
+    videoData.yt_vid_id = videoId;
+  }
+  
+  const description = videoData?.description || videoData?.desc 
+    ? (videoData.description || videoData.desc) 
+    : "No description for this video";
+
+  const currentUrl = `https://projects.darelisme.my.id/watch?v=${videoId}`;
+  
+  return (
+    <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
+      <ScrollToTop videoId={videoId} />
+      <div className="w-full">
+        <section className={styles.watchContainer}>
+          <div className={styles.watchComp}>
+            <div>
+              <div className="w-full" style={{ 
+                aspectRatio: '16/9',
+              }}>
+                <Player playerData={videoData} className="w-full h-full" />
+              </div>
+              <h1 className="text-2xl font-bold mt-7 mb-4">{videoData.title}</h1>
+              <section className='w-full mb-4'>
+                <ShareButton title={videoData.title} url={currentUrl} />
+              </section>
+              <WatchDescriptionViewer videoData={videoData} description={description}/>
+            </div>
+          </div>
+          <div className={styles.recommendationComp}>
+            <Recommendation videoId={videoId} />
+          </div>
+        </section>
+      </div>
+    </section>
+  );
 }
