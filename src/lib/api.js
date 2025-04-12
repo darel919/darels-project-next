@@ -5,6 +5,7 @@ export async function serverFetch(endpoint, options = {}) {
   
   const response = await fetch(url, {
     ...options,
+    cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'User-Agent': 'dp-iPlayer',
@@ -26,7 +27,10 @@ export async function getAllVideo() {
 
 export async function getVideoData(id) {
   try {
-    const res = await fetch(`https://api.darelisme.my.id/dp/watch?v=${id}`, { next: { revalidate: 600 } });
+    const res = await fetch(`https://api.darelisme.my.id/dp/watch?v=${id}`, { 
+      next: { revalidate: 600 },
+      cache: 'no-store'
+    });
     
     if (!res.ok) {
       if (res.status === 404) {

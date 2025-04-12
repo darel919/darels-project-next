@@ -1,8 +1,8 @@
-"use server"
-
 import { getAllCategoriesData } from "@/lib/api";
 import Link from "next/link";
 import ErrorState from "@/components/ErrorState";
+
+export const dynamic = 'force-dynamic';
 
 export async function generateMetadata() {
   return {
