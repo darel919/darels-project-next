@@ -66,7 +66,20 @@ export async function searchVideos(query) {
 }
 
 export async function getAllCategoriesData() {
-    return serverFetch(`/categories`);
+    const res = await fetch(`${API_BASE_URL}/categories`, {
+        cache: 'no-store',
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'dp-iPlayer',
+            'X-Environment': process.env.NODE_ENV
+        }
+    });
+    
+    if (!res.ok) {
+        throw new Error(`API error: ${res.status} ${res.statusText}`);
+    }
+    
+    return res.json();
 }
 
 export async function getCategoryData(categoryId) {
