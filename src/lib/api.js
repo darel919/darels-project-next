@@ -1,7 +1,8 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const LOCAL_API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL || API_BASE_URL;
 
 export async function serverFetch(endpoint, options = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${LOCAL_API_BASE_URL}${endpoint}`;
   
   const response = await fetch(url, {
     ...options,
@@ -27,7 +28,7 @@ export async function getAllVideo() {
 
 export async function getVideoData(id) {
   try {
-    const res = await fetch(`https://api.darelisme.my.id/dp/watch?v=${id}`, { 
+    const res = await fetch(`${LOCAL_API_BASE_URL}/watch?v=${id}`, { 
       next: { revalidate: 600 },
       cache: 'no-store'
     });
