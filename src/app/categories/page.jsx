@@ -22,7 +22,7 @@ export default async function CategoryPage() {
   }
 
   return (
-    <section className="flex flex-col items-center justify-center pt-20 px-4 sm:px-10 mb-12">
+    <section className="flex flex-col items-center justify-center pt-20 px-6 sm:px-10 mb-12">
       <div className="z-10 w-full min-h-[55vh] items-center justify-between text-sm font-mono">
         <div className="breadcrumbs text-sm mb-4">
           <ul>

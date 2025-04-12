@@ -15,7 +15,7 @@ async function Content() {
   return (
     <>
       {videoData && videoData.length > 0 ? (
-        <section className="flex flex-col items-center justify-center pt-20 px-8 sm:px-10">
+        <section className="flex flex-col items-center justify-center pt-20 px-6 sm:px-10">
           <div className="z-10 w-full items-center justify-between font-mono text-sm">
             <HomeGreetings/>
             <h1 className="text-4xl font-bold mt-8">Home</h1>

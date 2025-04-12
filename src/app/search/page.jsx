@@ -53,7 +53,7 @@ async function SearchResults({ query }) {
   }
 
   return (
-    <div className="container min-h-[60vh] min-w-screen pt-16 px-4 sm:px-12">     
+    <div className="container min-h-[60vh] min-w-screen pt-16 px-6 sm:px-12">     
       {error && (
         <div className="flex items-center mt-12 text-red-500">
           <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">

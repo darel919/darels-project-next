@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-
 export default function SearchBar() {
   const [isClient, setIsClient] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -14,9 +13,21 @@ export default function SearchBar() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const timeoutRef = useRef(null);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     setIsClient(true);
+
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   if (!isClient) {
@@ -111,7 +122,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="w-full relative">
+    <div className="w-full relative" ref={searchRef}>
       <form onSubmit={handleSubmit} className="w-full">
         <div className="relative">
           <input
@@ -120,6 +131,7 @@ export default function SearchBar() {
             className="input pl-6 input-bordered w-full rounded-full"
             value={searchQuery}
             onChange={handleSearch}
+            onFocus={() => searchQuery && setShowDropdown(true)}
             autoComplete="off"
             aria-autocomplete="none"
           />
