@@ -95,7 +95,7 @@ export default function Navbar() {
                 {isSuperadmin && (
                   <li>
                     <Link href="/manage" onClick={() => document.getElementById('navbar-menu').checked = false}>
-                      <summary className='text-lg'>Manage</summary>
+                      <summary className='text-lg'>Content Studio</summary>
                     </Link>
                     <ul>
                       <li>
