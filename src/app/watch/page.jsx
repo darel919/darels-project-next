@@ -11,7 +11,7 @@ import styles from './page.module.css';
 import ErrorState from '@/components/ErrorState';
 
 export async function generateMetadata({ searchParams }) {
-  const baseURL = 'https://api.darelisme.my.id/dp';
+  const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
   const params = await searchParams;
   const videoId = params.v;
 

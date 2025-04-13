@@ -17,7 +17,7 @@ export default function AuthPage() {
       const refreshToken = searchParams.get("rt");
       
       if (accessToken && refreshToken) {
-        const response = await fetch('https://api.darelisme.my.id/dws/user?loginWithCookies=true', {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_PATH_URL+'/dws/user?loginWithCookies=true', {
           credentials: 'include'
         });
 
