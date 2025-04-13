@@ -20,7 +20,7 @@ async function Content() {
   if (error) {
     return (
       <ErrorState 
-        message="Currently, the content library is unavailable" 
+        message="Currently, the content library is unavailable." 
         actionText="Try Again" 
         actionDesc="We are having trouble loading the content library. Please try refreshing the page."
         action="reload"

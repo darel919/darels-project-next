@@ -2,77 +2,111 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import Cookies from 'js-cookie';
 
 export const useAuthStore = create(
   persist(
-    (set) => ({
-      accessToken: null,
-      refreshToken: null,
+    (set, get) => ({
       isAuthenticated: false,
       userSession: null,
-
-      storeAtAndRt: (accessToken, refreshToken) => {
-        set({
-          accessToken,
-          refreshToken,
-          isAuthenticated: true
-        });
-
-        return useAuthStore.getState().fetchUserSession();
+      isLoading: true,
+      
+      isSuperadmin: (state) => {
+        return state.userSession?.user_metadata?.role === 'superadmin';
       },
 
-      clearTokens: async () => {
-        set({
-          accessToken: null,
-          refreshToken: null,
-          isAuthenticated: false,
-          userSession: null
+      handleAuthSuccess: (userSessionData) => {
+        if (!userSessionData) return;
+        
+        set({ 
+          userSession: userSessionData,
+          isAuthenticated: true,
+          isLoading: false
+        });
+        
+        const userData = {
+          id: userSessionData.user.id,
+          email: userSessionData.user.email,
+          provider_id: userSessionData.user.user_metadata.provider_id,
+          user_metadata: {
+            provider_id: userSessionData.user.user_metadata.provider_id,
+            full_name: userSessionData.user.user_metadata.full_name,
+            avatar_url: userSessionData.user.user_metadata.avatar_url,
+            role: userSessionData.user.user_metadata.role
+          }
+        };
+        
+        Cookies.set('user-session', JSON.stringify(userData), {
+          path: '/',
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production'
         });
 
+        localStorage.setItem('user-session', JSON.stringify(userData));
+      },
+
+      clearAuth: async () => {
+        const domains = ['.darelisme.my.id', 'localhost'];
+        const paths = ['/', '/auth'];
+        
+        domains.forEach(domain => {
+          paths.forEach(path => {
+            Cookies.remove('user-session', { domain, path });
+          });
+        });
+
+        localStorage.removeItem('user-session');
         localStorage.removeItem('auth-storage');
-        sessionStorage.removeItem('auth-storage');
+        sessionStorage.clear();
+
+        set({
+          isAuthenticated: false,
+          userSession: null,
+          isLoading: false
+        });
       },
 
       fetchUserSession: async () => {
         try {
+          set({ isLoading: true });
           const response = await fetch('https://api.darelisme.my.id/dws/user?loginWithCookies=true', {
-            credentials: 'include',
+            credentials: 'include'
           });
 
           if (!response.ok) {
-            if (response.status === 401 || response.status === 403) {
-              set({
-                accessToken: null,
-                refreshToken: null,
-                isAuthenticated: false,
-                userSession: null
-              });
-               localStorage.removeItem('auth-storage');
-               sessionStorage.removeItem('auth-storage');
-            }
-            throw new Error(`Failed to fetch user session: ${response.statusText}`);
+            throw new Error('Failed to fetch user session');
           }
 
-          const userSession = await response.json();
-          const userSessionData = userSession.data;
+          const data = await response.json();
+          const userSessionData = data.data;
 
-          set({ userSession: userSessionData, isAuthenticated: true });
+          get().handleAuthSuccess(userSessionData);
           return userSessionData;
         } catch (error) {
-          set({
-            accessToken: null,
-            refreshToken: null,
-            isAuthenticated: false,
-            userSession: null
-          });
-          localStorage.removeItem('auth-storage');
-          sessionStorage.removeItem('auth-storage');
+          console.error('Error fetching user session:', error);
+          await get().clearAuth();
           return null;
+        } finally {
+          set({ isLoading: false });
         }
       },
+
+      initializeAuth: async () => {
+        const currentStore = get();
+        if (currentStore.isAuthenticated && currentStore.userSession) {
+          set({ isLoading: false });
+          return currentStore.userSession;
+        }
+
+        return await currentStore.fetchUserSession();
+      }
     }),
     {
       name: "auth-storage",
+      partialize: (state) => ({ 
+        isAuthenticated: state.isAuthenticated,
+        userSession: state.userSession
+      })
     }
   )
 );

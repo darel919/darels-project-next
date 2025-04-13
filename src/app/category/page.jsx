@@ -42,7 +42,7 @@ export default async function CategoryPage({ searchParams }) {
   if (!listId) {
     return (
       <ErrorState 
-        message="Invalid Category Link" 
+        message="Invalid Category Link." 
         actionText="Select Category"
         actionDesc="The category you're trying to access doesn't exist. Please select a valid category."
         action="categories"
@@ -73,7 +73,7 @@ export default async function CategoryPage({ searchParams }) {
   } catch (err) {
     return (
       <ErrorState 
-        message="This category is currently unavailable" 
+        message="This category is currently unavailable." 
         actionText="Return to Categories"
         actionDesc="We are having trouble loading this category. Please try another category or come back later."
         action="categories"

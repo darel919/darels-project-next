@@ -22,7 +22,7 @@ export default async function CategoryPage() {
 
   if (error) {
     return <ErrorState 
-      message="Currently, categories are unavailable" 
+      message="Currently, categories are unavailable." 
       actionDesc="We are having trouble loading the categories. Please try again later."
       action="home" 
     />;

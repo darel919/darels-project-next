@@ -72,7 +72,7 @@ export default async function WatchPage({ searchParams }) {
     videoData = await getVideoData(videoId);
   } catch (error) {
     return <ErrorState 
-      message="This video is currently unavailable" 
+      message="This video is currently unavailable." 
       actionDesc="We couldn't load this video. It might have been removed or there might be a temporary issue."
       action="home"
     />;

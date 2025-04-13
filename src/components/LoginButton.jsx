@@ -1,19 +1,30 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useAuthStore } from "@/lib/authStore";
 import { openLoginWindow } from "@/lib/authUtils";
-import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default function LoginButton() {
-  const { isAuthenticated, clearTokens } = useAuthStore();
+export default function LoginButton({ redirectPath }) {
+  const { isAuthenticated, clearAuth, isLoading, initializeAuth } = useAuthStore();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    initializeAuth();
+  }, []);
+
+  const handleLogout = async () => {
+    await clearAuth();
+    router.push('/');
+  };
 
   const handleLogin = () => {
     setIsLoggingIn(true);
     setLoginError(null);
     
-    const success = openLoginWindow(window.location.pathname, (reason) => {
+    const success = openLoginWindow(redirectPath || window.location.pathname, (reason) => {
       setIsLoggingIn(false);
       setLoginError("Login cancelled");
       
@@ -39,10 +50,8 @@ export default function LoginButton() {
       const currentAuthState = useAuthStore.getState().isAuthenticated;
       
       if (currentAuthState) {
-
         clearInterval(checkAuthInterval);
         setIsLoggingIn(false);
-
         window.location.reload();
       }
       
@@ -64,7 +73,7 @@ export default function LoginButton() {
         setIsLoggingIn(false);
         setTimeout(() => {
           window.location.reload();
-        },250)
+        }, 250);
       }
     };
     
@@ -72,13 +81,16 @@ export default function LoginButton() {
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
+  if (isLoading) {
+    return (
+      <button className="btn btn-ghost btn-sm loading"></button>
+    );
+  }
+
   if (isAuthenticated) {
     return (
       <button
-        onClick={() => {
-          clearTokens();
-          window.location.reload();
-        }}
+        onClick={handleLogout}
         className="btn btn-error btn-sm"
       >
         Logout
@@ -87,23 +99,16 @@ export default function LoginButton() {
   }
   
   return (
-    <div className="flex flex-col items-end">
+    <div className="flex flex-col items-center">
       {loginError && (
         <div className="text-error text-xs mb-1">{loginError}</div>
       )}
       <button
         onClick={handleLogin}
+        className={`btn btn-primary btn-sm ${isLoggingIn ? 'loading' : ''}`}
         disabled={isLoggingIn}
-        className="btn btn-primary btn-sm"
       >
-        {isLoggingIn ? (
-          <>
-            <span className="loading loading-spinner loading-xs"></span>
-            Logging in...
-          </>
-        ) : (
-          "Login"
-        )}
+        {isLoggingIn ? 'Logging in...' : 'Login'}
       </button>
     </div>
   );

@@ -16,6 +16,9 @@ export default function ErrorState({ message, actionText = "Return to Home", act
       case 'categories':
         router.push('/categories');
         break;
+      case 'manage':
+        router.push('/manage');
+        break;
       default:
         if (action.startsWith('/')) {
           router.push(action);

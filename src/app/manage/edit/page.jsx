@@ -1,9 +1,33 @@
-"use client";
-import { useSearchParams } from 'next/navigation';
+// "use client";
+
 import Link from 'next/link';
-export default function EditPage() {
-    const searchParams = useSearchParams();
-    const videoId = searchParams.get('v');
+import { notFound } from 'next/navigation';
+import { getVideoData } from '@/lib/api';
+import ErrorState from '@/components/ErrorState';
+
+export default async function EditPage({searchParams}) {
+  const params = await searchParams;
+  const videoId = params.v;
+  
+    if (!videoId) {
+        return <ErrorState 
+        message="Invalid Video ID." 
+        actionDesc="Please recheck the video ID."
+        actionText='Return to Manage'
+        action="manage"
+        />;
+    }
+    let videoData = null;
+    try {
+        videoData = await getVideoData(videoId);
+    } catch (error) {
+        return <ErrorState 
+        message="This video is unavailable." 
+        actionDesc="We couldn't edit this video. Please recheck the video ID or choose another video to edit."
+        actionText='Return to Manage'
+        action="manage"
+        />;
+    }
 
     // return (
     //     <div className="min-h-screen pt-20 px-6 sm:px-10">

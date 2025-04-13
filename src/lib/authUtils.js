@@ -27,6 +27,7 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
     
     try {
       const isAuthenticated = useAuthStore.getState().isAuthenticated;
+      
       if (isAuthenticated) {
         console.log("Authentication detected via store check");
         clearInterval(checkWindowClosed);

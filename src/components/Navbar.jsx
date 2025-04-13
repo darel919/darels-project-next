@@ -14,6 +14,8 @@ export default function Navbar() {
   const [avatarError, setAvatarError] = useState(false);
   const { userSession } = useAuthStore();
 
+  const isSuperadmin = userSession?.user?.user_metadata?.provider_id === process.env.NEXT_PUBLIC_SUPERADMIN;
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
@@ -26,7 +28,6 @@ export default function Navbar() {
   useEffect(() => {
     setIsLoading(true);
     async function fetchCategories() {
-
       try {
         const data = await getAllCategoriesData();
         setCategories(data);
@@ -91,14 +92,14 @@ export default function Navbar() {
                     )}
                   </li>
                 )}
-                {userSession && (
+                {isSuperadmin && (
                   <li>
-                    <Link href="/manage"  onClick={() => document.getElementById('navbar-menu').checked = false}>
+                    <Link href="/manage" onClick={() => document.getElementById('navbar-menu').checked = false}>
                       <summary className='text-lg'>Manage</summary>
                     </Link>
                     <ul>
                       <li>
-                        <Link href="/manage/upload"  className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>
+                        <Link href="/manage/upload" className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>
                           <section>
                             <h5 className="font-semilight font-mono text-lg">Upload</h5>
                           </section>
