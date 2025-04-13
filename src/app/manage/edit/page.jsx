@@ -3,8 +3,24 @@
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getVideoData } from '@/lib/api'; 
 import ErrorState from '@/components/ErrorState';
+
+async function fetchVideoData(videoId) {
+    try {
+        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/watch?v=' + videoId);
+        if (!response.ok) {
+            throw new Error('Failed to fetch video data');
+        }
+        const data = await response.json();
+        if (!data) {
+            throw new Error('Video not found');
+        }
+        return data;
+    } catch (error) {
+        console.error("Error fetching video data:", error);
+        throw error;
+    }
+}
 
 async function fetchCategories() {
     try {
@@ -61,7 +77,7 @@ export default function EditPage() {
         setError(null);
         try {
             const [videoRes, fetchedCategories] = await Promise.all([
-                await getVideoData(videoId),
+                await fetchVideoData(videoId),
                 await fetchCategories() 
             ]);
             
