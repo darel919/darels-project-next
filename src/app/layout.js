@@ -33,11 +33,9 @@ export default function RootLayout({
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
       <body className="font-sans">
         <Navbar/>
-        <main>
-          <Suspense fallback={<Loading />}>
-            {children}
-          </Suspense>
-        </main>
+        <Suspense fallback={<Loading />}>
+          {children}
+        </Suspense>
         <Footer/>
       </body>
     </html>

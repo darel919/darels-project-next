@@ -10,10 +10,10 @@ export default function GlobalError({ error, reset }) {
             <span>An unexpected error occurred</span>
           </div>
           <div className="flex gap-4">
-            <button onClick={() => window.location.href = '/'} className="btn btn-neutral">
+            <button onClick={() => window.location.href = '/'} className="btn text-[var(--color-text)] btn-primary hover:bg-secondary">
               Go Home
             </button>
-            <button onClick={() => reset()} className="btn btn-primary">
+            <button onClick={() => reset()} className="btn text-[var(--color-text)] btn-primary hover:bg-secondary">
               Try again
             </button>
           </div>

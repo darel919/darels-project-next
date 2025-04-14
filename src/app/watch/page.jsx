@@ -4,8 +4,7 @@ import { notFound } from 'next/navigation';
 import { getVideoData } from '@/lib/api';
 import Player from '../../components/Player';
 import Recommendation from '../../components/WatchRecommendations';
-import WatchDescriptionViewer from '../../components/WatchDescriptionViewer';
-import ShareButton from '../../components/ShareButton';
+import VideoDataViewer from '../../components/VideoDataViewer';
 import ScrollToTop from '../../components/ScrollToTop';
 import styles from './page.module.css';
 import ErrorState from '@/components/ErrorState';
@@ -82,12 +81,6 @@ export default async function WatchPage({ searchParams }) {
     videoData.yt_vid_id = videoId;
   }
   
-  const description = videoData?.description || videoData?.desc 
-    ? (videoData.description || videoData.desc) 
-    : "No description for this video";
-
-  const currentUrl = `https://projects.darelisme.my.id/watch?v=${videoId}`;
-  
   return (
     <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
       <ScrollToTop videoId={videoId} />
@@ -95,16 +88,27 @@ export default async function WatchPage({ searchParams }) {
         <section className={styles.watchContainer}>
           <div className={styles.watchComp}>
             <div>
-              <div className="w-full" style={{ 
-                aspectRatio: '16/9',
-              }}>
-                <Player playerData={videoData} className="w-full h-full" />
-              </div>
-              <h1 className="text-2xl font-bold mt-7 mb-4">{videoData.title}</h1>
-              <section className='w-full mb-4'>
-                <ShareButton title={videoData.title} url={currentUrl} />
-              </section>
-              <WatchDescriptionViewer videoData={videoData} description={description}/>
+              <Player playerData={videoData} className="w-full h-full mb-4 aspect-16/9"/>
+              {videoData.isHidden ? 
+                <div className="badge badge-ghost" title="This video is hidden. You have to share this video for others to see it.">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                  <p>Hidden</p>
+                </div> 
+                : null
+              }
+              {videoData.expand.category[0].isHidden ? 
+                <div className="badge badge-ghost" title="This video is inside a hidden category. You have to share this video for others to see it.">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+                  </svg>
+                  <p>Hidden</p>
+                </div> 
+                : null
+              }
+              <h1 className="text-2xl font-bold mt-4 mb-4">{videoData.title}</h1>
+              <VideoDataViewer videoData={videoData} />
             </div>
           </div>
           <div className={styles.recommendationComp}>

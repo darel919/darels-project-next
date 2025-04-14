@@ -24,8 +24,8 @@ export async function serverFetch(endpoint, options = {}) {
   return response.json();
 }
 
-export async function getAllVideo() {
-    return serverFetch(`/?sortBy=desc`);
+export async function getAllVideo(sortBy = 'desc') {
+    return serverFetch(`/?sortBy=${sortBy}`);
 }
 
 export async function getVideoData(id) {

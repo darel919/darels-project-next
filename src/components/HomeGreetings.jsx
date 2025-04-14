@@ -33,7 +33,7 @@ export default function HomeGreetings() {
   }, [userSession]);
 
   return (
-    <div className="text-center sm:text-left my-8 sm:mt-0">
+    <div className="text-center sm:text-left my-4 sm:mt-0">
       <h5 
         className="text-lg font-bold transition-opacity duration-400 ease-in-out"
         style={{ opacity }}

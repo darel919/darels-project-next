@@ -152,7 +152,7 @@ export default function Navbar() {
                   <span className="text-xl">?</span>
                 </div>
               </div>
-              <p className='ml-3 text-xs font-bold'>Sign in</p>
+              {/* <p className='ml-3 text-xs font-bold'>Sign in</p> */}
             </button>
             </Link>}
         </div>

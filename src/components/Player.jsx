@@ -168,7 +168,7 @@ export default function Player({ playerData, className }) {
     }
 
     return (
-        <div id="iframe" className={`w-full h-full flex justify-center items-center ${styles.iframeComp}`}
+        <div id="iframe" className={`flex justify-center items-center ${styles.iframeComp} ${className}`}
             style={loadingIframe && bgUrl ? { 
                 backgroundImage: `url(${bgUrl})`, 
                 backgroundSize: 'cover', 
@@ -176,7 +176,7 @@ export default function Player({ playerData, className }) {
                 backdropFilter: 'blur(4px)',
                 WebkitBackdropFilter: 'blur(4px)',
                 position: 'relative',
-                transition: 'all 0.3s ease'
+                transition: 'all 0.2s ease'
             } : {}}>
             {loadingIframe && bgUrl && <div className="absolute inset-0" style={{
                 backgroundColor: 'rgba(0, 0, 0, 0.5)',

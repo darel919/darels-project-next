@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect, useRef } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ErrorState from '@/components/ErrorState';
 
 async function fetchVideoData(videoId) {
@@ -40,6 +40,7 @@ export default function EditPage() {
     const searchParams = useSearchParams();
     const params = searchParams
     const videoId = params.get('v');
+    const router = useRouter();
     
     const [videoData, setVideoData] = useState(null);
     const [categories, setCategories] = useState([]);
@@ -338,6 +339,9 @@ export default function EditPage() {
             }
         }
     };
+    const handleWatch = () => {
+        router.push('/watch?v=' + videoId);
+    }
 
     if (isLoading) {
         return <div className="min-h-screen pt-20 px-6 sm:px-10 flex justify-center items-center"><span className="loading loading-lg"></span></div>;
@@ -368,16 +372,23 @@ export default function EditPage() {
     return (
         <div className="min-h-screen pt-20 px-6 sm:px-10 pb-20">
             <section>
-                <div className="breadcrumbs text-sm mb-4">
+                <div className="breadcrumbs text-sm mb-4 font-mono">
                     <ul>
                         <li><Link href="/" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Home</Link></li>
-                        <li><Link href="/manage" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Studio</Link></li>
+                        <li><Link href="/manage" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Content Studio</Link></li>
                         <li><p>Editing: <b>{videoData.title}</b></p></li>
                     </ul>
                 </div>
                 <section className='sm:flex items-center justify-between'>
-                    <h1 className="text-xl font-bold">Video details</h1>
+                    <h1 className="text-2xl font-bold font-mono">Video details</h1>
                     <section className='mt-4 sm:mt-0'>
+                        <button 
+                            className="btn rounded-xl mx-1"
+                            onClick={handleWatch}
+                            disabled={hasChanges || isSaving}
+                        >
+                            <span className="text-sm sm:text-md font-bold">Watch</span>
+                        </button>
                         <button 
                             className="btn rounded-xl mx-1 hover:bg-warning hover:border-warning"
                             onClick={handleResetAllChanges}
@@ -442,9 +453,15 @@ export default function EditPage() {
                                         Pick a category
                                     </option>
                                     {categories.map((category) => (
-                                        <option key={category.id} value={category.id}>
-                                            {category.title}
-                                        </option>
+                                        category.isHidden ? (
+                                            <option key={category.id} value={category.id} title="This category is hidden. If you choose this category, your video will also be hidden.">
+                                                {category.title} (Hidden)
+                                            </option>
+                                        ) : (
+                                            <option key={category.id} value={category.id}>
+                                                {category.title}
+                                            </option>
+                                        )
                                     ))}
                                     <option value="create_new" className="font-bold text-info">
                                         + Create new category...
@@ -461,7 +478,7 @@ export default function EditPage() {
                                     setCurrentIsHidden(e.target.checked);
                                     handleInputChange('isHidden', e.target.checked);
                                 }}
-                                className="toggle bg-green-900 checked:bg-red-800 border-none toggle-xl"
+                                className="toggle bg-green-400 checked:bg-red-800 border-none toggle-xl"
                                 disabled={isSaving}
                             />
                         <p className='text-lg sm:text-md font-bold sm:font-normal ml-2'>Hide this video</p>
@@ -470,7 +487,7 @@ export default function EditPage() {
                 </section>
                 <section className="mt-12 flex justify-center">
                     <button 
-                        className="btn btn-neutral hover:bg-error hover:text-white w-64"
+                        className="btn text-[var(--color-text)] btn-primary hover:bg-error w-64"
                         onClick={handleDelete}
                         disabled={isDeleting}
                     >

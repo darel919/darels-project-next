@@ -8,12 +8,9 @@ export default function Error({ error, reset }) {
         <span className="ml-0 sm:ml-2 py-6 font-light text-3xl sm:text-2xl">{error.message}</span>
       </div>
       <div className="flex gap-4">
-        <button onClick={() => window.location.href = '/'} className="btn btn-primary rounded-4xl p-4">
+        <button onClick={() => window.location.href = '/'} className="btn text-[var(--color-text)] btn-primary hover:bg-secondary rounded-4xl p-4">
           Return to Home
         </button>
-        {/* <button onClick={() => reset()} className="btn btn-secondary">
-          Try again
-        </button> */}
       </div>
     </section>
   )

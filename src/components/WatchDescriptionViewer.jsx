@@ -3,7 +3,7 @@
 import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './WatchDescriptionViewer.module.css';
 
-export default function VideoDescription({ videoData, description }) {
+export default function VideoDescription({ videoData }) {
   const formatFullDate = (dateString) => {
     if (!dateString) return 'No date available';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -22,7 +22,7 @@ export default function VideoDescription({ videoData, description }) {
               <span>{videoData.total_views || 'No'} views • {videoData.created ? formatRelativeTime(videoData.created) : 'No date'}</span>
             </div>
             <p className="text-sm my-2 line-clamp-1">
-              {description}
+              {videoData.desc}
             </p>
             <span className="text-sm text-base-content/80 mt-2">Show more</span>
           </div>
@@ -35,7 +35,7 @@ export default function VideoDescription({ videoData, description }) {
             </button>
           </div>
           <p className="mt-2 mb-4">
-            {description}
+            {videoData.desc}
           </p>
           {videoData.expand?.category?.[0] && (
             <a href={`/category?list=${videoData.expand.category[0].id}`} className="card bg-secondary hover:bg-base-300 font-mono">

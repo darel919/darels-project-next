@@ -54,7 +54,7 @@ async function Content() {
             <div className="breadcrumbs text-sm mb-4">
                 <ul>
                     <li><Link href="/">Home</Link></li>
-                    <li><p>Studio</p></li>
+                    <li><p>Content Studio</p></li>
                 </ul>
             </div>
             <h1 className="text-4xl font-bold my-4">Content Studio</h1>

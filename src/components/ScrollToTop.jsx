@@ -5,10 +5,12 @@ import { useEffect } from 'react';
 export default function ScrollToTop({ videoId }) {
   useEffect(() => {
     
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
+    setTimeout(()=> {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }, 350)
   }, [videoId]);
 
   return null;

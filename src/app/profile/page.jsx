@@ -69,7 +69,7 @@ export default function DashboardPage() {
                   </div>
                 ) : (
                   <div className="avatar avatar-placeholder">
-                    <div className="bg-neutral text-neutral-content p-4 rounded-full w-16">
+                    <div className="bg-neutral text-neutral-content rounded-full p-5">
                       <span className="text-xl">{getInitials(userSession.user.user_metadata.full_name)}</span>
                     </div>
                   </div>
@@ -77,8 +77,9 @@ export default function DashboardPage() {
                 <section className="ml-4 font-mono">
                   <p className="text-2xl">{userSession.user.user_metadata.full_name}</p>
                   <p className="text-xs my-1">{userSession.user.user_metadata.email}</p>
-                  <section className="card bg-neutral py-2 px-4 rounded-lg my-2">
-                    <p className="text-xs my-1">Last sign in: {formatLastSignIn(userSession.user.last_sign_in_at)}</p>
+                  <section className="card bg-secondary py-2 px-4 rounded-lg my-2">
+                    <p className="text-xs my-1">User ID: {userSession.user.user_metadata.provider_id}</p>
+                    {/* <p className="text-xs my-1">Last sign in: {formatLastSignIn(userSession.user.last_sign_in_at)}</p> */}
                     <p className="text-xs my-1">Created: {formatCreatedAt(userSession.user.created_at)}</p>
                   </section>
                 </section>
@@ -88,6 +89,10 @@ export default function DashboardPage() {
               className="btn btn-error w-full mt-4"
               onClick={handleLogout}
             >
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+              </svg>
+
               Logout
             </button>
           </>

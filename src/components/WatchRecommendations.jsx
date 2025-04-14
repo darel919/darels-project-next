@@ -45,7 +45,7 @@ export default function WatchRecommendations({ videoId }) {
     useEffect(() => {
         setTimeout(() => {
             setSelectedCategory("unique");
-        }, 750);
+        }, 1000);
     }, []);
 
     const getCategoryTitle = () => {
@@ -120,12 +120,28 @@ export default function WatchRecommendations({ videoId }) {
                         )}
                     </form>
                 </div>
-            ) : null}
+            ) : (
+                <div className="overflow-x-auto w-full mb-6">
+                    <div className="flex gap-2">
+                        <div className="skeleton w-10 h-10"></div>
+                        <div className="skeleton w-24 h-10"></div>
+                        <div className="skeleton w-32 h-10"></div>
+                    </div>
+                </div>
+            )}
 
             {pending ? (
-                <div className={`${styles.loading} flex flex-col items-center`}>
-                    <div className="loading loading-ball loading-2xl" />
-                    <p className='mt-4 text-lg'>Loading recommendations...</p>
+                <div className="flex flex-col gap-4 w-full">
+                    {[...Array(7)].map((_, i) => (
+                        <div key={i} className="flex gap-4">
+                            <div className="skeleton w-32 h-20"></div>
+                            <div className="flex flex-col gap-2 flex-1">
+                                <div className="skeleton h-4 w-3/4"></div>
+                                <div className="skeleton h-3 w-1/4"></div>
+                                <div className="skeleton h-3 w-1/2"></div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             ) : recommendations.length === 0 ? (
                 <div className={styles.noRecommendations}>
