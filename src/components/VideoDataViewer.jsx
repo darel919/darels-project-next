@@ -10,19 +10,21 @@ export default function VideoDescription({ videoData }) {
   const { userSession } = useAuthStore();
   const isSuperadmin = userSession?.user?.user_metadata?.provider_id === process.env.NEXT_PUBLIC_SUPERADMIN;
 
-  const shareContent = () => {
+  const shareContent = async () => {
     const shareData = {
       title: videoData.title,
-      text: `Hey! Let's watch "${videoData.title}" at darel's Projects!`,
-      url: currentUrl,
+      text: `Hey! Watch this "${videoData.title}" video on darel's Projects!`,
+      url: window.location.href,
+      hashtags: videoData.tags?.join(', ') || '',
+      via: 'darelsProjects',
     };
     
     if (navigator.share) {
-      navigator.share(shareData)
+      await navigator.share(shareData)
         .then(() => console.log('Content shared successfully'))
         .catch((error) => console.error('Error sharing content:', error));
     } else {
-      alert("Your browser doesn't support share API!");
+      alert("Failed to share this video.\n\nThis is because either you're not in secure context, or your browser doesn't support share API.");
       console.error("Web Share is not supported in your browser!");
     }
   };
