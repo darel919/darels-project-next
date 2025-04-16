@@ -7,7 +7,12 @@ import ErrorState from '@/components/ErrorState';
 
 async function fetchVideoData(videoId) {
     try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/watch?v=' + videoId);
+        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/watch?v=' + videoId, {
+            headers: {
+                "intent": "edit"
+            },
+            cache: 'no-store',
+        });
         if (!response.ok) {
             throw new Error('Failed to fetch video data');
         }

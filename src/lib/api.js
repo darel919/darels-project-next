@@ -31,8 +31,10 @@ export async function getAllVideo(sortBy = 'desc') {
 export async function getVideoData(id) {
   try {
     const res = await fetch(`${LOCAL_API_BASE_URL}/watch?v=${id}`, { 
-      next: { revalidate: 600 },
-      cache: 'no-store'
+      cache: 'no-store',
+      headers: {
+        "intent": "watch"
+      }
     });
     
     if (!res.ok) {
@@ -54,7 +56,6 @@ export async function getVideoData(id) {
 export async function searchVideos(query) {
   try {
     const response = await serverFetch(`/search?q=${encodeURIComponent(query)}`, {
-      next: { revalidate: 60 }
     });
     const results = response && response.data ? response.data : [];
     

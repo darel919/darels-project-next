@@ -159,11 +159,11 @@ export default function SearchBar() {
             {error ? (
               <div className="p-4 text-error">{error}</div>
             ) : (
-              <ul className="menu menu-vertical p-2">
+              <ul className="menu menu-vertical p-2 w-full">
                 {searchResults.map((result) => (
                   <li key={result.id}>
                     <Link
-                      href={`/project/${result.id}`}
+                      href={`/watch?v=${result.id}`}
                       onClick={() => setShowDropdown(false)}
                       className="block p-2 hover:bg-base-200"
                     >

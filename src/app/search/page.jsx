@@ -27,7 +27,7 @@ export default async function SearchPage({ searchParams }) {
 
   try {
     const response = await fetch(`${LOCAL_API_BASE_URL}/search?q=${encodeURIComponent(query)}`, {
-      next: { revalidate: 60 }
+      cache: 'no-store',
     });
 
     if (!response.ok) {
