@@ -35,18 +35,20 @@ export const useAuthStore = create(
             role: userSessionData.user.user_metadata.role
           }
         };
+
+        const isSecureContext = window.location.protocol === 'https:';
         
         Cookies.set('user-session', JSON.stringify(userData), {
           path: '/',
           sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production'
+          secure: isSecureContext
         });
 
         localStorage.setItem('user-session', JSON.stringify(userData));
       },
 
       clearAuth: async () => {
-        const domains = ['.darelisme.my.id', 'localhost'];
+        const domains = ['.darelisme.my.id', 'localhost', 'server.drl'];
         const paths = ['/', '/auth'];
         
         domains.forEach(domain => {
@@ -69,6 +71,24 @@ export const useAuthStore = create(
       fetchUserSession: async () => {
         try {
           set({ isLoading: true });
+
+          const storedSession = localStorage.getItem('user-session');
+          if (storedSession) {
+            try {
+              const userData = JSON.parse(storedSession);
+              if (userData?.id && userData?.provider_id) {
+                set({
+                  userSession: { user: userData },
+                  isAuthenticated: true,
+                  isLoading: false
+                });
+                return { user: userData };
+              }
+            } catch (e) {
+              console.error('Invalid stored session:', e);
+            }
+          }
+
           const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_PATH_URL+'/dws/user?loginWithCookies=true', {
             credentials: 'include'
           });

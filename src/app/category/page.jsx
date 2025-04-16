@@ -60,7 +60,7 @@ export default async function CategoryPage({ searchParams }) {
             <ul>
               <li><Link href="/">Home</Link></li>
               <li><Link href="/categories">Category</Link></li>
-              <li><p>{categoryData.category.title}</p></li>
+              <li><p><b>{categoryData.category.title}</b></p></li>
             </ul>
           </div>
 

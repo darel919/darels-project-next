@@ -10,7 +10,7 @@ export function openLoginWindow(currentPath, onAuthCancelled) {
   localStorage.removeItem("authSuccess");
   
   const redirectUrl = encodeURIComponent(`${window.location.origin}/auth`);
-  const authUrl = `https://darelisme.my.id/auth/login?redirectExternal=${redirectUrl}`;
+  const authUrl = `${process.env.NEXT_PUBLIC_DARELISME_URL}/auth/login?redirectExternal=${redirectUrl}`;
   
   const loginWindow = window.open(authUrl, 'darelismeLogin', 'width=600,height=700');
   
@@ -71,7 +71,7 @@ export function redirectToLogin(currentPath) {
   localStorage.setItem("redirectAfterAuth", currentPath);
   sessionStorage.removeItem("redirectionCompleted");
   const redirectUrl = encodeURIComponent(`${window.location.origin}/auth`);
-  window.location.href = `https://darelisme.my.id/auth/login?redirectExternal=${redirectUrl}`;
+  window.location.href = `${process.env.NEXT_PUBLIC_DARELISME_URL}/auth/login?redirectExternal=${redirectUrl}`;
 }
 
 export function useRequireAuth() {

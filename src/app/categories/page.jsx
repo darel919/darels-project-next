@@ -34,7 +34,7 @@ export default async function CategoryPage() {
         <div className="breadcrumbs text-sm mb-4">
           <ul>
             <li><Link href="/">Home</Link></li>
-            <li><p>Category</p></li>
+            <li><p><b>Category</b></p></li>
           </ul>
         </div>
         <h1 className="text-4xl font-bold mb-2">Categories</h1>

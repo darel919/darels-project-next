@@ -8,23 +8,28 @@ export async function middleware(request) {
   const isAdminPath = adminPaths.some(adminPath => path.startsWith(adminPath));
 
   const userSession = request.cookies.get('user-session');
+  const isValidSession = userSession?.value && userSession.value !== 'undefined';
   
   if (isProtected || isAdminPath) {
-    if (!userSession || !userSession.value) {
+    if (!isValidSession) {
       const loginUrl = new URL('/auth/login', request.url);
       loginUrl.searchParams.set('redirect', path);
       return NextResponse.redirect(loginUrl);
     }
 
-    if (isAdminPath) {
-      try {
-        const userData = JSON.parse(userSession.value);
-        if (userData.provider_id !== process.env.NEXT_PUBLIC_SUPERADMIN) {
-          return NextResponse.redirect(new URL('/unauthorized', request.url));
-        }
-      } catch (e) {
+    try {
+      const userData = JSON.parse(userSession.value);
+      if (!userData?.id || !userData?.provider_id) {
+        throw new Error('Invalid session data');
+      }
+
+      if (isAdminPath && userData.provider_id !== process.env.NEXT_PUBLIC_SUPERADMIN) {
         return NextResponse.redirect(new URL('/unauthorized', request.url));
       }
+    } catch (e) {
+      const loginUrl = new URL('/auth/login', request.url);
+      loginUrl.searchParams.set('redirect', path);
+      return NextResponse.redirect(loginUrl);
     }
   }
 

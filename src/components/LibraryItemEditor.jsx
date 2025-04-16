@@ -1,5 +1,6 @@
 import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './LibraryItemViewer.module.css';
+import Link from 'next/link';
 
 export default function LibraryItemViewer({ data }) {
   
@@ -47,13 +48,13 @@ export default function LibraryItemViewer({ data }) {
                       <span>{video.total_views || 'No'} views</span>
                       {video.created && <span title={new Date(video.created).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}>{formatRelativeTime(video.created)}</span>}
                     </div>
-                    {/* {video.expand && video.expand.category && video.expand.category[0] && (
+                    {video.expand && video.expand.category && video.expand.category[0] && (
                       <div className={styles.categoryLinkContainer}>
-                        <a href={`/category?list=${video.expand.category[0].id}`}>
+                        <Link href={`/category?list=${video.expand.category[0].id}`} target="_blank">
                           <p>{video.expand.category[0].title}</p>
-                        </a>
+                        </Link>
                       </div>
-                    )} */}
+                    )}
                   </div>
                 </div>
               </div>

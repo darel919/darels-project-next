@@ -418,7 +418,7 @@ export default function EditPage() {
                     </section>
                 </section>
                 <section className='flex flex-col sm:flex-row items-start justify-center mt-4'>
-                    <img src={process.env.NEXT_PUBLIC_API_BASE_URL+'/thumb?id='+videoData.id} alt="Thumbnail" className="rounded-xl mt-4 h-auto max-w-[300px] max-h-[400px] object-cover mb-8 sm:mb-0" />
+                    <img src={process.env.NEXT_PUBLIC_API_BASE_URL+'/thumb?id='+videoData.id} alt="Thumbnail" className="rounded-xl mt-4 h-auto w-[40vw] object-cover mb-8 sm:mb-0" />
                     <fieldset className="fieldset ml-0 sm:ml-8 rounded-box w-full">
                         <label className="fieldset-label mb-2 text-lg">Title</label>
                         <input 
