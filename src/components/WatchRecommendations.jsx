@@ -6,7 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { formatRelativeTime } from '../utils/timeUtils';
 import styles from './WatchRecommendations.module.css';
 
-export default function WatchRecommendations({ videoId }) {
+export default function WatchRecommendations() {
     const [recommendationData, setRecommendationData] = useState({ unique: [], same_category: [] });
     const [pending, setPending] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -44,9 +44,13 @@ export default function WatchRecommendations({ videoId }) {
 
     useEffect(() => {
         setTimeout(() => {
-            setSelectedCategory("unique");
+            if (recommendationData.same_category?.videos?.length > 0) {
+                setSelectedCategory("same_category");
+            } else if (recommendationData.unique?.length > 0) {
+                setSelectedCategory("unique");
+            }
         }, 1000);
-    }, []);
+    }, [recommendationData]);
 
     const getCategoryTitle = () => {
         if (recommendationData.same_category?.info) {
@@ -98,15 +102,17 @@ export default function WatchRecommendations({ videoId }) {
                             checked={selectedCategory === null}
                             onChange={() => setSelectedCategory(null)}
                         />
-                        <input
-                            className="btn"
-                            type="radio"
-                            name="recommendation_type"
-                            aria-label="For You"
-                            value="unique"
-                            checked={selectedCategory === 'unique'}
-                            onChange={handleRadioChange}
-                        />
+                        {recommendationData.unique?.length > 0 && (
+                            <input
+                                className="btn"
+                                type="radio"
+                                name="recommendation_type"
+                                aria-label="For You"
+                                value="unique"
+                                checked={selectedCategory === 'unique'}
+                                onChange={handleRadioChange}
+                            />
+                        )}
                         {recommendationData.same_category.info && (
                             <input
                                 className="btn"

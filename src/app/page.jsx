@@ -11,9 +11,10 @@ import LoadingRedirect from '@/components/LoadingRedirect';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export default function Page({ searchParams }) {
-  const sortBy = searchParams?.sortBy;
-  const cookieStore = cookies();
+export default async function Page({ searchParams }) {
+  const paramVal = await searchParams
+  const sortBy = paramVal?.sortBy;
+  const cookieStore = await cookies();
   const storedPreference = cookieStore.get('sortPreference')?.value || 'desc';
   
   // Show loading component when no sortBy parameter is present, then redirect
