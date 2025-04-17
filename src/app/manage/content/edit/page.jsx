@@ -172,7 +172,7 @@ export default function EditPage() {
 
         setIsCreatingCategory(true);
         try {
-            const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/category/new', {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/category', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ export default function EditPage() {
                 
                 setTimeout(() => {
                     toastElement.remove();
-                    window.location.href = '/manage';
+                    window.location.href = '/manage/content';
                 }, 2000);
 
             } catch (error) {
@@ -347,6 +347,64 @@ export default function EditPage() {
     const handleWatch = () => {
         router.push('/watch?v=' + videoId);
     }
+    const handleCustomThumbUpload = async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append('content_id', videoId);
+        formData.append('file', file);
+
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/thumb/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to upload thumbnail');
+            }
+
+            const imageElement = document.getElementById('thumbnail-image');
+            if (imageElement) {
+                imageElement.src = `${process.env.NEXT_PUBLIC_API_BASE_URL}/thumb?id=${videoId}&t=${Date.now()}`;
+            }
+
+            const toastElement = document.createElement('div');
+            toastElement.className = 'toast toast-end';
+            toastElement.setAttribute('role', 'alert');
+            const alertElement = document.createElement('div');
+            alertElement.className = 'alert alert-success';
+            alertElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Thumbnail updated successfully!</span>
+            `;
+            toastElement.appendChild(alertElement);
+            document.body.appendChild(toastElement);
+            
+            setTimeout(() => {
+                toastElement.remove();
+            }, 2000);
+
+        } catch (error) {
+            console.error("Error uploading thumbnail:", error);
+            const toastElement = document.createElement('div');
+            toastElement.className = 'toast toast-end';
+            toastElement.setAttribute('role', 'alert');
+            const alertElement = document.createElement('div');
+            alertElement.className = 'alert alert-error';
+            alertElement.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Failed to update thumbnail: ${error.message}</span>
+            `;
+            toastElement.appendChild(alertElement);
+            document.body.appendChild(toastElement);
+            
+            setTimeout(() => {
+                toastElement.remove();
+            }, 3000);
+        }
+    }
 
     if (isLoading) {
         return <div className="min-h-screen pt-20 px-6 sm:px-10 flex justify-center items-center"><span className="loading loading-lg"></span></div>;
@@ -380,7 +438,8 @@ export default function EditPage() {
                 <div className="breadcrumbs text-sm mb-4 font-mono">
                     <ul>
                         <li><Link href="/" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Home</Link></li>
-                        <li><Link href="/manage" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Content Studio</Link></li>
+                        <li><Link href="/manage">Manage</Link></li>
+                        <li><Link href="/manage/content" onClick={handleNavigation} className={isSaving ? 'pointer-events-none opacity-50' : ''}>Content Studio</Link></li>
                         <li><p>Editing: <b>{videoData.title}</b></p></li>
                     </ul>
                 </div>
@@ -418,7 +477,30 @@ export default function EditPage() {
                     </section>
                 </section>
                 <section className='flex flex-col sm:flex-row items-start justify-center mt-4'>
-                    <img src={process.env.NEXT_PUBLIC_API_BASE_URL+'/thumb?id='+videoData.id} alt="Thumbnail" className="rounded-xl mt-4 h-auto w-[40vw] object-cover mb-8 sm:mb-0" />
+                    <div className="relative group">
+                        <img 
+                            id="thumbnail-image"
+                            src={process.env.NEXT_PUBLIC_API_BASE_URL+'/thumb?id='+videoData.id} 
+                            alt="Thumbnail" 
+                            className="rounded-xl mt-4 h-auto w-[40vw] object-cover mb-8 sm:mb-0"
+                        />
+                        <label 
+                            htmlFor="thumbnail-upload" 
+                            className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-0 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-xl"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                            </svg>
+                            <span>Upload new thumbnail</span>
+                        </label>
+                        <input 
+                            id="thumbnail-upload" 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={handleCustomThumbUpload}
+                        />
+                    </div>
                     <fieldset className="fieldset ml-0 sm:ml-8 rounded-box w-full">
                         <label className="fieldset-label mb-2 text-lg">Title</label>
                         <input 
@@ -457,17 +539,36 @@ export default function EditPage() {
                                     <option value="" disabled={selectedCategoryId !== ""}>
                                         Pick a category
                                     </option>
-                                    {categories.map((category) => (
-                                        category.isHidden ? (
-                                            <option key={category.id} value={category.id} title="This category is hidden. If you choose this category, your video will also be hidden.">
-                                                {category.title} (Hidden)
+                                    {categories.map((category) => {
+                                        let label = category.title;
+                                        let tooltip = "";
+                                        let tags = [];
+
+                                        if (category.isHidden) {
+                                            tags.push("Hidden");
+                                            tooltip += "This category is hidden. ";
+                                        }
+                                        if (category.isExclusive) {
+                                            tags.push("Exclusive");
+                                            tooltip += "This category is exclusive. ";
+                                        }
+
+                                        if (tags.length > 0) {
+                                            label += ` (${tags.join(', ')})`;
+                                            if (category.isHidden) {
+                                                tooltip += "If you choose this category, your video will also be hidden.";
+                                            }
+                                            if (category.isExclusive) {
+                                                tooltip += "If you choose this category, watch recommendation will only display other videos that are in the same category as this.";
+                                            }
+                                        }
+
+                                        return (
+                                            <option key={category.id} value={category.id} title={tooltip.trim() || undefined}>
+                                                {label}
                                             </option>
-                                        ) : (
-                                            <option key={category.id} value={category.id}>
-                                                {category.title}
-                                            </option>
-                                        )
-                                    ))}
+                                        );
+                                    })}
                                     <option value="create_new" className="font-bold text-info">
                                         + Create new category...
                                     </option>
@@ -490,9 +591,10 @@ export default function EditPage() {
                         </label>
                     </fieldset>
                 </section>
+                <div className="divider"></div>
                 <section className="mt-12 flex justify-center">
                     <button 
-                        className="btn text-[var(--color-text)] btn-primary hover:bg-error w-64"
+                        className="btn btn-error btn-outline rounded-xl w-64"
                         onClick={handleDelete}
                         disabled={isDeleting}
                     >

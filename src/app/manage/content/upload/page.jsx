@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import ErrorState from '@/components/ErrorState';
+import Link from 'next/link';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 
@@ -25,6 +26,7 @@ export default function UploadPage() {
     submitted_by: 'darelisme Archives'
   });
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [thumbnailFile, setThumbnailFile] = useState(null);
 
   const videoRef = useRef(null);
   const uploadRef = useRef(null);
@@ -45,12 +47,12 @@ export default function UploadPage() {
             });
             setIsLoading(false);
           } else {
-            localStorage.setItem('redirectAfterSwitch', '/manage/upload');
-            window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + '/manage/upload';
+            localStorage.setItem('redirectAfterSwitch', '/manage/content/upload');
+            window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + '/manage/content/upload';
           }
         } catch (err) {
-          localStorage.setItem('redirectAfterSwitch', '/manage/upload');
-          window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + '/manage/upload';
+          localStorage.setItem('redirectAfterSwitch', '/manage/content/upload');
+          window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + '/manage/content/upload';
         }
       } else {
         setIsLoading(false);
@@ -130,7 +132,7 @@ export default function UploadPage() {
       }
       
       try {
-        const response = await fetch(`${API_BASE_URL}/category/new`, {
+        const response = await fetch(`${API_BASE_URL}/category`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -187,6 +189,26 @@ export default function UploadPage() {
         }
       }
     }, 50);
+  };
+
+  const handleThumbnailChange = (e) => {
+    setThumbnailFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (file) {
+      const previewURL = URL.createObjectURL(file);
+      const previewImg = document.createElement('img');
+      previewImg.src = previewURL;
+      previewImg.className = 'w-full h-auto rounded-lg mt-2';
+      previewImg.id = 'thumbnail-preview';
+      
+      const existingPreview = document.getElementById('thumbnail-preview');
+      if (existingPreview) {
+        existingPreview.src = previewURL;
+      } else {
+        const thumbnailInput = e.target;
+        thumbnailInput.parentNode.appendChild(previewImg);
+      }
+    }
   };
 
   const updateStatusMessage = (status) => {
@@ -282,7 +304,10 @@ export default function UploadPage() {
 
       const storeResponse = await fetch(API_BASE_URL + '/store', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+
+        },
         body: JSON.stringify(initialData)
       });
 
@@ -302,6 +327,7 @@ export default function UploadPage() {
       const uploadFormData = new FormData();
       uploadFormData.append('file', fileInput.files[0]);
       uploadFormData.append('content_id', videoId);
+      // uploadFormData.append('isMock', 'true')
 
       await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -331,6 +357,21 @@ export default function UploadPage() {
         xhr.open('POST', API_BASE_URL + '/upload', true);
         xhr.send(uploadFormData);
       });
+
+      if (thumbnailFile) {
+        const thumbFormData = new FormData();
+        thumbFormData.append('file', thumbnailFile);
+        thumbFormData.append('content_id', videoId);
+
+        const thumbResponse = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/thumb/upload', {
+          method: 'POST',
+          body: thumbFormData,
+        });
+
+        if (!thumbResponse.ok) {
+          console.error('Thumbnail upload failed, but video upload succeeded');
+        }
+      }
 
       setUploadProgress(100);
       setStatusMessage('Upload complete! Processing video...');
@@ -393,7 +434,8 @@ export default function UploadPage() {
       <div className="breadcrumbs text-sm mb-4 font-mono">
         <ul>
           <li><a href="/">Home</a></li>
-          <li><a href="/manage">Content Studio</a></li>
+          <li><Link href="/manage">Manage</Link></li>
+          <li><a href="/manage/content">Content Studio</a></li>
           <li><b>Video Upload</b></li>
         </ul>
       </div>
@@ -498,6 +540,21 @@ export default function UploadPage() {
             onChange={(e) => setFormData(prev => ({ ...prev, submitted_by: e.target.value }))}
             required
           />
+        </div>
+
+        <div className="form-control w-full">
+          <label className="label">
+            <span className="label-text">Thumbnail (Optional)</span>
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            className="file-input file-input-bordered w-full"
+            onChange={handleThumbnailChange}
+          />
+          <label className="label">
+            <span className="label-text-alt">Upload a custom thumbnail, or one will be generated automatically</span>
+          </label>
         </div>
 
         <button

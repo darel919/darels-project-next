@@ -31,7 +31,7 @@ export default function LibraryItemViewer({ data }) {
               <div key={video.id || index} className={styles.videoCard}>
                 <div className={styles.videoContent}>
                   <div className={styles.thumbnailContainer}>
-                    <a href={`/manage/edit?v=${video.id}`} className={styles.thumbnailLink}>
+                    <a href={`/manage/content/edit?v=${video.id}`} className={styles.thumbnailLink}>
                       <img 
                         src={getThumbnailUrl(video.id)} 
                         alt={video.title} 
@@ -41,7 +41,7 @@ export default function LibraryItemViewer({ data }) {
                     </a>
                   </div>
                   <div className={styles.videoInfo}>
-                    <a href={`/manage/edit?v=${video.id}`} className={styles.titleLink}>
+                    <a href={`/manage/content/edit?v=${video.id}`} className={styles.titleLink}>
                       <h3 className={styles.videoTitle}>{video.title}</h3>
                     </a>
                     <div className={styles.videoMeta}>

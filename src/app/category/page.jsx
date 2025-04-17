@@ -4,6 +4,7 @@ import { getCategoryData } from "@/lib/api";
 import LibraryItemViewer from "../../components/LibraryItemViewer";
 import Link from "next/link";
 import ErrorState from "@/components/ErrorState";
+import CategoriesHeader from "@/components/CategoriesHeader";
 
 export async function generateMetadata({ searchParams }) {
   const params = await searchParams;
@@ -59,13 +60,12 @@ export default async function CategoryPage({ searchParams }) {
           <div className="breadcrumbs text-sm mb-4">
             <ul>
               <li><Link href="/">Home</Link></li>
-              <li><Link href="/categories">Category</Link></li>
-              <li><p><b>{categoryData.category.title}</b></p></li>
+              <li><Link href="/categories">Categories</Link></li>
+              <li><p>Viewing: <b>{categoryData.category.title}</b></p></li>
             </ul>
           </div>
 
-          <h1 className="text-4xl font-bold mb-2">{categoryData.category.title}</h1>
-          <p className="mb-2">{categoryData.category.description}</p>
+          <CategoriesHeader title={categoryData.category.title} desc={categoryData.category.desc} id={categoryData.category.id}/>
           <LibraryItemViewer data={categoryData} />
         </div>
       </section>

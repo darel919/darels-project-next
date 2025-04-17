@@ -95,11 +95,21 @@ export default function Navbar() {
                 {isSuperadmin && (
                   <li>
                     <Link href="/manage" onClick={() => document.getElementById('navbar-menu').checked = false}>
-                      <summary className='text-lg'>Content Studio</summary>
+                      <summary className='text-lg'>Manage</summary>
                     </Link>
                     <ul>
                       <li>
-                        <Link href="/manage/upload" className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>
+                      <Link href="/manage/content" onClick={() => document.getElementById('navbar-menu').checked = false}>
+                        <summary className='text-lg'>Content Studio</summary>
+                      </Link>
+                      </li>
+                      <li>
+                      <Link href="/manage/categories" onClick={() => document.getElementById('navbar-menu').checked = false}>
+                        <summary className='text-lg'>Category Manager</summary>
+                      </Link>
+                      </li>
+                      <li>
+                        <Link href="/manage/content/upload" className='text-lg' onClick={() => document.getElementById('navbar-menu').checked = false}>
                           <section>
                             <h5 className="font-semilight font-mono text-lg">Upload</h5>
                           </section>

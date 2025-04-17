@@ -30,7 +30,7 @@ export default function VideoDescription({ videoData }) {
   };
 
   const manageContent = () => {
-    router.push('/manage/edit?v=' + videoData.id);
+    router.push('/manage/content/edit?v=' + videoData.id);
   }
 
   return (
