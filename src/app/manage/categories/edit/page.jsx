@@ -144,6 +144,10 @@ export default function CategoryEditor() {
         }
     };
 
+    const handleGoToPage = () => {
+        router.push(`/category?list=${categoryId}`);
+    }
+
     if (isLoading) {
         return (
             <div className="min-h-screen pt-20 px-6 sm:px-10 flex justify-center items-center">
@@ -182,7 +186,15 @@ export default function CategoryEditor() {
 
             <div className="flex flex-col gap-8">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Edit Category</h1>
+                    <h1 className="text-2xl font-bold font-mono">Edit Category</h1>
+                    <section className='mt-4 sm:mt-0'>
+                    <button 
+                            className="btn rounded-xl mx-1"
+                            onClick={handleGoToPage}
+                            disabled={isDirty || isSaving}
+                        >
+                            <span className="text-sm sm:text-md font-bold">Go to Category</span>
+                    </button>
                     <button 
                         onClick={handleSave}
                         disabled={!isDirty || isSaving}
@@ -197,6 +209,8 @@ export default function CategoryEditor() {
                             <span>Save</span>
                         )}
                     </button>
+                    </section>
+
                 </div>
 
                 <div className="form-control w-full gap-4">

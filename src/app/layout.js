@@ -1,13 +1,13 @@
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Suspense } from 'react';
-
-import './globals.css';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Loading from './loading';
-
 import Script from 'next/script';
+import './globals.css';
+
+// Analytics Code
 import {GoogleAnalytics} from '@next/third-parties/google'
 const clarityCode = `(function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -18,11 +18,11 @@ const clarityCode = `(function(c,l,a,r,i,t,y){
 
 export const metadata = {
   title: "darel's Projects",
-  description: "Welcome to darel's Projects. This is a collection of various projects and experiments.",
+  description: "Welcome to darel's Projects. This is a collection of my various projects and experiments.",
   metadataBase: new URL('https://projects.darelisme.my.id'),
   openGraph: {
     title: "darel's Projects",
-    description: "Welcome to darel's Projects. This is a collection of various projects and experiments.",
+    description: "Welcome to darel's Projects. This is a collection of my various projects and experiments.",
     url: 'https://projects.darelisme.my.id',
     siteName: "darel's Projects",
     images: [
@@ -38,15 +38,18 @@ export const metadata = {
 export default function RootLayout({ 
   children 
 }) {
+  const isProd = process.env.NODE_ENV === 'production';
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      <head>
+      {isProd && (
+        <head>
         <Script id="ms-clarity" strategy="beforeInteractive">
           {clarityCode}
         </Script>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_ANALYTICS_GA_ID} />
       </head>
-      <body className="font-sans">
+      )}
+      <body>
         <Navbar/>
         <Suspense fallback={<Loading />}>
           {children}
