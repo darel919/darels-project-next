@@ -77,20 +77,23 @@ export default function UploadPage() {
       const response = await fetch(API_BASE_URL + '/categories?showHidden=true');
       if (response.ok) {
         const data = await response.json();
-        
         const formattedCategories = data.map(cat => ({
           id: cat.id,
           title: cat.title
         }));
-        
         formattedCategories.push({
           id: "create_new",
           title: "Create new category"
         });
-        
         setCategories(formattedCategories);
-        
-        if (formattedCategories.length > 1) {
+        let lastCategory = '';
+        if (typeof window !== 'undefined') {
+          lastCategory = localStorage.getItem('lastSelectedCategory') || '';
+        }
+        const found = formattedCategories.find(cat => cat.id === lastCategory);
+        if (found) {
+          setFormData(prev => ({ ...prev, category_select: lastCategory }));
+        } else if (formattedCategories.length > 1) {
           setFormData(prev => ({ ...prev, category_select: formattedCategories[0].id }));
         }
       }
@@ -119,18 +122,18 @@ export default function UploadPage() {
 
   const handleCategoryChange = async (e) => {
     const newValue = e.target.value;
-    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('lastSelectedCategory', newValue);
+    }
     if (newValue === "create_new") {
       const categoryName = prompt("Enter a name for the new category:");
       if (!categoryName || categoryName.trim() === "") {
         return;
       }
-      
       const categoryDesc = prompt("Enter a description for the new category:");
       if (!categoryDesc || categoryDesc.trim() === "") {
         return;
       }
-      
       try {
         const response = await fetch(`${API_BASE_URL}/category`, {
           method: 'POST',
@@ -142,17 +145,16 @@ export default function UploadPage() {
             desc: categoryDesc.trim()
           })
         });
-        
         if (!response.ok) {
           throw new Error("Failed to create category");
         }
-        
         const newCategory = await response.json();
-        
         await fetchCategories();
-        
         if (newCategory && newCategory.id) {
           setFormData(prev => ({ ...prev, category_select: newCategory.id }));
+          if (typeof window !== 'undefined') {
+            localStorage.setItem('lastSelectedCategory', newCategory.id);
+          }
         }
       } catch (error) {
         console.error("Failed to create category:", error);
@@ -219,11 +221,8 @@ export default function UploadPage() {
       case 'starting':
         setStatusMessage('Processing has started...');
         break;
-      case 'converting480':
-        setStatusMessage('Converting video to 480p...');
-        break;
-      case 'converting720':
-        setStatusMessage('Converting video to 720p...');
+      case 'converting':
+        setStatusMessage('Converting video...');
         break;
       case 'done':
         setStatusMessage('Video is ready to view!');
@@ -248,15 +247,16 @@ export default function UploadPage() {
           console.error("No content ID provided for status check");
           return;
         }
-        
         const response = await fetch(`${API_BASE_URL}/upload/jobCheck?id=${id}`);
         const data = await response.json();
-
-        if (data?.upload_status) {
-          setProcessingStatus(data.upload_status);
-          updateStatusMessage(data.upload_status);
-
-          if (data.upload_status === 'done') {
+        const uploadStatus = data?.upload_status;
+        if (uploadStatus && uploadStatus.status) {
+          setProcessingStatus(uploadStatus.status);
+          updateStatusMessage(uploadStatus.status);
+          if (uploadStatus.status === 'converting' && typeof uploadStatus.progress === 'number') {
+            setUploadProgress(Math.round(uploadStatus.progress));
+          }
+          if (uploadStatus.status === 'done') {
             stopJobStatusCheck();
             setShowSuccessToast(true);
             window.open(`/watch?v=${id}`, '_blank');
@@ -584,7 +584,7 @@ export default function UploadPage() {
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">Upload Progress</h3>
           
-          {uploadProgress > 0 && uploadProgress < 100 && (
+          {isUploading && uploadProgress > 0 && uploadProgress < 100 && (
             <div className="mb-4">
               <h4 className="font-bold mb-2">Uploading</h4>
               <progress className="progress progress-success w-full" value={uploadProgress} max="100"></progress>
@@ -596,23 +596,36 @@ export default function UploadPage() {
             <div className="mb-4">
               <h4 className="font-bold mb-2">Processing</h4>
               <ul className="steps w-full">
-                <li className={`step ${['pending', 'starting', 'converting480', 'converting720', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Queue</li>
-                <li className={`step ${['starting', 'converting480', 'converting720', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Starting</li>
-                <li className={`step ${['converting480', 'converting720', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Processing</li>
+                <li className={`step ${['pending', 'starting', 'converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Waiting</li>
+                <li className={`step ${['starting', 'converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Starting</li>
+                <li className={`step ${['converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Processing</li>
                 <li className={`step ${['done'].includes(processingStatus) ? 'step-success' : ''}`}>Done</li>
               </ul>
+              {processingStatus === 'starting' && (
+                <div className="mt-4">
+                  <progress className="progress progress-success w-full"></progress>
+                </div>
+              )}
+              {processingStatus === 'converting' && (
+                <div className="mt-4">
+                  <progress className="progress progress-success w-full" value={uploadProgress} max="100"></progress>
+                  <p className="mt-2">{uploadProgress}% complete</p>
+                </div>
+              )}
             </div>
           )}
 
-          <p className="text-lg mt-4">{statusMessage}</p>
+          <p className="text-lg mt-4">
+            {processingStatus === 'starting' ? statusMessage : (processingStatus === 'converting' ? '' : statusMessage)}
+          </p>
 
           <div className="modal-action">
             {(uploadProgress === 100 && processingStatus === 'done' || uploadFailed) ? (
               <button className="btn btn-success" onClick={() => modalRef.current?.close()}>Close</button>
-            ) : uploadProgress < 100 ? (
+            ) : (isUploading && uploadProgress < 100) ? (
               <button className="btn btn-error" onClick={handleCancelUpload}>Cancel Upload</button>
             ) : (
-              <p className="text-warning">Processing... Please wait</p>
+              <></>
             )}
           </div>
         </div>
