@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import Hls from 'hls.js';
 import artplayerPluginHlsControl from 'artplayer-plugin-hls-control';
 import Artplayer from 'artplayer';
 import styles from './Player.module.css';
 
 export default function Player({ playerData, className }) {
+    const [baseAPIEndpoint, setBaseAPIEndpoint] = useState(process.env.NEXT_PUBLIC_API_BASE_URL);
     const artRef = useRef(null);
     const containerRef = useRef(null);
-    const videoRef = useRef(null);
     const [bgUrl, setBgUrl] = useState(null);
     const [isSelfMode, setIsSelfMode] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
@@ -17,55 +17,70 @@ export default function Player({ playerData, className }) {
     const [isInitializing, setIsInitializing] = useState(true);
     const [useProxy, setUseProxy] = useState(false);
 
-    const baseAPIEndpoint = process.env.NEXT_PUBLIC_API_BASE_URL;
-
+    useEffect(() => {
+        async function detectIsHome() {
+          const extHost = process.env.NEXT_PUBLIC_APP_EXT_BASE_URL?.replace(/^https?:\/\//, '');
+          const localBase = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL;
+          if (window.location.hostname === extHost) {
+            try {
+              const pingResponse = await fetch(process.env.NEXT_PUBLIC_DARELISME_PING_URL);
+              if (pingResponse.ok) {
+                setBaseAPIEndpoint(process.env.NEXT_PUBLIC_API_BASE_URL);
+              } else {
+                localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
+                window.location.href = localBase + window.location.pathname + window.location.search;
+                setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
+              }
+            } catch {
+              localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
+              window.location.href = localBase + window.location.pathname + window.location.search;
+              setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
+            }
+          } else {
+            setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
+          }
+        }
+        detectIsHome();
+      }, []);
 
     useEffect(() => {
         if (!playerData) return;
-        
         if (artRef.current) {
             artRef.current.destroy();
             artRef.current = null;
         }
-        
         if (playerData.selfHostUrl) {
             setIsSelfMode(true);
-        } 
-        else if (playerData.yt_vid_id) {
+        } else if (playerData.yt_vid_id) {
             setIsSelfMode(false);
             setLoadingIframe(true);
             setBgUrl(`${baseAPIEndpoint}/thumb?id=${playerData.id}`);
-        } 
-        else {
-            setErrorMsg("No valid playback source available.");
+        } else {
+            setErrorMsg('No valid playback source available.');
             setTimeout(() => window.close(), 3000);
         }
         setIsInitializing(false);
-    }, [playerData]);
+    }, [playerData, baseAPIEndpoint]);
 
     useEffect(() => {
         if (isSelfMode && playerData?.selfHostUrl) {
             initializeArtPlayer();
         }
-    }, [isSelfMode, playerData]);
+    }, [isSelfMode, playerData, baseAPIEndpoint]);
 
     const initializeArtPlayer = () => {
         if (!containerRef.current || !playerData || !playerData.selfHostUrl) return;
-
         const thumbUrl = baseAPIEndpoint + '/thumb?id=' + playerData.id;
         const hlsUrl = baseAPIEndpoint.replace(/\/dp$/, '') + playerData.selfHostUrl;
-
         if (artRef.current) {
             artRef.current.destroy();
             artRef.current = null;
         }
-
         artRef.current = new Artplayer({
             container: containerRef.current,
             url: hlsUrl,
             type: 'm3u8',
             autoplay: true,
-            // volume: 0.5,
             isLive: false,
             muted: false,
             autoSize: false,
@@ -107,10 +122,8 @@ export default function Player({ playerData, className }) {
                     if (Hls.isSupported()) {
                         if (art.hls) art.hls.destroy();
                         const hls = new Hls();
-                        
                         hls.loadSource(url);
                         hls.attachMedia(video);
-                        
                         art.hls = hls;
                         art.on('destroy', () => {
                             if (art.hls) {
@@ -123,10 +136,9 @@ export default function Player({ playerData, className }) {
                     } else {
                         art.notice.show = 'Unsupported HLS playback';
                     }
-                }
+                },
             },
         });
-
     };
 
     const handleIframeLoad = () => {

@@ -10,7 +10,9 @@ export default function WatchRecommendations() {
     const [recommendationData, setRecommendationData] = useState({ unique: [], same_category: [] });
     const [pending, setPending] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [hasSetDefault, setHasSetDefault] = useState(false);
     const searchParams = useSearchParams();
+    const [isExclusive, setIsExclusive] = useState(false);
 
     const fetchRecommendations = async (id) => {
         setPending(true);
@@ -43,14 +45,37 @@ export default function WatchRecommendations() {
     }, [searchParams]);
 
     useEffect(() => {
-        setTimeout(() => {
-            if (recommendationData.same_category?.videos?.length > 0) {
-                setSelectedCategory("same_category");
-            } else if (recommendationData.unique?.length > 0) {
+        const savedCategory = localStorage.getItem("recommendationCategory");
+        if (savedCategory) {
+            setSelectedCategory(savedCategory);
+            setHasSetDefault(true);
+        }
+    }, []);
+
+    useEffect(() => {
+        const exclusive = recommendationData.same_category?.info?.isExclusive;
+        setIsExclusive(!!exclusive);
+        if (exclusive) {
+            setSelectedCategory("same_category");
+            setHasSetDefault(true);
+            return;
+        }
+        if (!hasSetDefault && selectedCategory === null) {
+            if (recommendationData.unique?.length > 0) {
                 setSelectedCategory("unique");
+                setHasSetDefault(true);
+            } else if (recommendationData.same_category?.videos?.length > 0) {
+                setSelectedCategory("same_category");
+                setHasSetDefault(true);
             }
-        }, 1000);
-    }, [recommendationData]);
+        }
+    }, [recommendationData, selectedCategory, hasSetDefault]);
+
+    useEffect(() => {
+        if (selectedCategory !== null && !isExclusive) {
+            localStorage.setItem("recommendationCategory", selectedCategory);
+        }
+    }, [selectedCategory, isExclusive]);
 
     const getCategoryTitle = () => {
         if (recommendationData.same_category?.info) {
@@ -91,49 +116,54 @@ export default function WatchRecommendations() {
 
     return (
         <div className={`${styles.recommendationsContainer} font-mono`}>
-            {!pending ? (
-                <div className="overflow-x-auto w-full mb-6">
-                    <form className="filter" onReset={handleFormReset}>
-                        <input 
-                            className="btn btn-square filter-reset" 
-                            type="radio" 
-                            name="recommendation_type" 
-                            aria-label="×" 
-                            checked={selectedCategory === null}
-                            onChange={() => setSelectedCategory(null)}
-                        />
-                        {recommendationData.unique?.length > 0 && (
-                            <input
-                                className="btn"
-                                type="radio"
-                                name="recommendation_type"
-                                aria-label="For You"
-                                value="unique"
-                                checked={selectedCategory === 'unique'}
-                                onChange={handleRadioChange}
+            {isExclusive ? null : (
+                !pending ? (
+                    <div className="overflow-x-auto w-full mb-6">
+                        <form className="filter" onReset={handleFormReset}>
+                            <input 
+                                className="btn btn-square filter-reset" 
+                                type="radio" 
+                                name="recommendation_type" 
+                                aria-label="×" 
+                                checked={selectedCategory === null}
+                                onChange={() => setSelectedCategory(null)}
+                                disabled={isExclusive}
                             />
-                        )}
-                        {recommendationData.same_category.info && (
-                            <input
-                                className="btn"
-                                type="radio"
-                                name="recommendation_type"
-                                aria-label={categoryTitle}
-                                value="same_category"
-                                checked={selectedCategory === 'same_category'}
-                                onChange={handleRadioChange}
-                            />
-                        )}
-                    </form>
-                </div>
-            ) : (
-                <div className="overflow-x-auto w-full mb-6">
-                    <div className="flex gap-2">
-                        <div className="skeleton w-10 h-10"></div>
-                        <div className="skeleton w-24 h-10"></div>
-                        <div className="skeleton w-32 h-10"></div>
+                            {recommendationData.unique?.length > 0 && (
+                                <input
+                                    className="btn"
+                                    type="radio"
+                                    name="recommendation_type"
+                                    aria-label="For You"
+                                    value="unique"
+                                    checked={selectedCategory === 'unique'}
+                                    onChange={handleRadioChange}
+                                    disabled={isExclusive}
+                                />
+                            )}
+                            {recommendationData.same_category.info && (
+                                <input
+                                    className="btn"
+                                    type="radio"
+                                    name="recommendation_type"
+                                    aria-label={categoryTitle}
+                                    value="same_category"
+                                    checked={selectedCategory === 'same_category'}
+                                    onChange={handleRadioChange}
+                                    disabled={isExclusive}
+                                />
+                            )}
+                        </form>
                     </div>
-                </div>
+                ) : (
+                    <div className="overflow-x-auto w-full mb-6">
+                        <div className="flex gap-2">
+                            <div className="skeleton w-10 h-10"></div>
+                            <div className="skeleton w-24 h-10"></div>
+                            <div className="skeleton w-32 h-10"></div>
+                        </div>
+                    </div>
+                )
             )}
 
             {pending ? (

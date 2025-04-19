@@ -19,10 +19,10 @@ export async function generateMetadata({ searchParams }) {
     if (videoId) {
       videoData = await getVideoData(videoId);
       return {
-        title: videoData?.title +" - darel's Projects",
+        title: videoData?.title + " - darel's Projects",
         description: `Play ${videoData?.title} at darel's Projects`,
         keywords: videoData?.title ? `${videoData.title}, darelc, darelisme, darelism, archives` : 'darelc, darelisme, darelism, archives',
-        authors: [{ name: videoData?.creator}],
+        authors: [{ name: videoData?.creator }],
         openGraph: {
           title: videoData?.title,
           description: `Play ${videoData?.title} at darel's Projects`,
@@ -59,9 +59,10 @@ export async function generateMetadata({ searchParams }) {
 }
 
 export default async function WatchPage({ searchParams }) {
+
   const params = await searchParams;
   const videoId = params.v;
-  
+
   if (!videoId) {
     notFound();
   }
@@ -76,11 +77,11 @@ export default async function WatchPage({ searchParams }) {
       action="home"
     />;
   }
-    
+
   if (!videoData.yt_vid_id && videoId) {
     videoData.yt_vid_id = videoId;
   }
-  
+
   return (
     <section className="flex min-h-[55vh] flex-col items-center pt-20 mx-4 sm:mx-8 mb-8">
       <ScrollToTop videoId={videoId} />

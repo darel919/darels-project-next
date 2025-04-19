@@ -1,7 +1,6 @@
 {
   "name": "dp-on-next",
   "version": "1.0.0",
-  "type": "module",
   "private": true,
   "scripts": {
     "dev": "node version.js && next dev --turbopack",

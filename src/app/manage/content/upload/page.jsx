@@ -26,6 +26,7 @@ export default function UploadPage() {
     submitted_by: 'darelisme Archives'
   });
   const [showSuccessToast, setShowSuccessToast] = useState(false);
+  const [showErrorToast, setShowErrorToast] = useState(false);
   const [thumbnailFile, setThumbnailFile] = useState(null);
 
   const videoRef = useRef(null);
@@ -172,9 +173,13 @@ export default function UploadPage() {
     const fileName = file.name.replace(/\.[^/.]+$/, "");
     setFormData(prev => ({ ...prev, title: fileName }));
 
+    // Set date_created to file's last modified date
+    const lastModifiedDate = new Date(file.lastModified);
+    const formattedDate = lastModifiedDate.toISOString().split('T')[0];
+    setFormData(prev => ({ ...prev, date_created: formattedDate }));
+
     const objectUrl = URL.createObjectURL(file);
     setPreviewUrl(objectUrl);
-    
     setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.pause();
@@ -183,7 +188,6 @@ export default function UploadPage() {
         videoRef.current.src = objectUrl;
         videoRef.current.load();
         const playPromise = videoRef.current.play();
-        
         if (playPromise !== undefined) {
           playPromise.catch(err => {
             console.log("Autoplay prevented:", err);
@@ -227,6 +231,9 @@ export default function UploadPage() {
       case 'done':
         setStatusMessage('Video is ready to view!');
         break;
+      case 'error':
+        setStatusMessage('Video failed to be uploaded');
+        break;
       default:
         setStatusMessage('Processing video...');
     }
@@ -260,6 +267,15 @@ export default function UploadPage() {
             stopJobStatusCheck();
             setShowSuccessToast(true);
             window.open(`/watch?v=${id}`, '_blank');
+            modalRef.current?.close();
+          }
+          if (uploadStatus.status === 'error') {
+            stopJobStatusCheck();
+            setUploadFailed(true);
+            setStatusMessage('Video failed to be uploaded');
+            setShowSuccessToast(false);
+            setShowErrorToast(true);
+            window.removeEventListener('beforeunload', handleBeforeUnload);
             modalRef.current?.close();
           }
         }
@@ -427,6 +443,14 @@ export default function UploadPage() {
         <div className="toast toast-top toast-end z-50">
           <div className="alert alert-success">
             <span>Upload successful! Your video is ready to view.</span>
+          </div>
+        </div>
+      )}
+
+      {showErrorToast && (
+        <div className="toast toast-top toast-end z-50">
+          <div className="alert alert-error">
+            <span>Upload failed! Please try again.</span>
           </div>
         </div>
       )}
