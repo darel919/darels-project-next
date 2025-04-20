@@ -4,17 +4,8 @@ import { Suspense } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Loading from './loading';
-import Script from 'next/script';
+import AnalyticsClient from '@/components/AnalyticsClient';
 import './globals.css';
-
-// Analytics Code
-import {GoogleAnalytics} from '@next/third-parties/google'
-const clarityCode = `(function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "${process.env.NEXT_PUBLIC_ANALYTICS_CLARITY_ID}");`
-
 
 export const metadata = {
   title: "darel's Projects",
@@ -38,17 +29,11 @@ export const metadata = {
 export default function RootLayout({ 
   children 
 }) {
-  const isProd = process.env.NODE_ENV === 'production';
   return (
     <html lang="en" className={`${GeistSans.variable} ${GeistMono.variable}`}>
-      {isProd && (
-        <head>
-        <Script id="ms-clarity" strategy="beforeInteractive">
-          {clarityCode}
-        </Script>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_ANALYTICS_GA_ID} />
+      <head>
+        <AnalyticsClient />
       </head>
-      )}
       <body>
         <Navbar/>
         <Suspense fallback={<Loading />}>
