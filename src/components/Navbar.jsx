@@ -29,7 +29,8 @@ export default function Navbar() {
     setIsLoading(true);
     async function fetchCategories() {
       try {
-        const data = await getAllCategoriesData();
+        const providerId = userSession?.user?.user_metadata?.provider_id;
+        const data = await getAllCategoriesData(providerId);
         setCategories(data);
         setIsLoading(false);
       } catch (err) {
@@ -39,7 +40,7 @@ export default function Navbar() {
     }
 
     fetchCategories();
-  }, []);
+  }, [userSession]);
 
   const getInitials = (name) => {
     if (!name) return "?";

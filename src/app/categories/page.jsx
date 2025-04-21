@@ -1,4 +1,5 @@
 import { getAllCategoriesData } from "@/lib/api";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import ErrorState from "@/components/ErrorState";
 import CategoryHeader from "@/components/CategoryHeader";
@@ -14,9 +15,12 @@ export async function generateMetadata() {
 export default async function CategoryPage() {
   let categoryData = null;
   let error = null;
+  let providerId = null;
 
   try {
-    categoryData = await getAllCategoriesData();
+    const cookieStore = cookies();
+    providerId = cookieStore.get('provider_id')?.value || null;
+    categoryData = await getAllCategoriesData(providerId);
   } catch (err) {
     error = err.message;
   }

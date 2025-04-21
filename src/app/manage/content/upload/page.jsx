@@ -1,12 +1,20 @@
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import dynamic from "next/dynamic";
 import ErrorState from '@/components/ErrorState';
 import Link from 'next/link';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 
+import { useAuthStore } from "@/lib/authStore";
+
+const VideoState = dynamic(() => import("@/components/VideoState"), { ssr: false });
+
 export default function UploadPage() {
+  const { userSession } = useAuthStore();
+  const uuid = userSession?.user?.user_metadata?.provider_id; 
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -35,6 +43,48 @@ export default function UploadPage() {
   const statusIntervalRef = useRef(null);
   const uploadInProgress = (uploadProgress > 0 && uploadProgress < 100) || 
                           (showProcessing && processingStatus !== 'done' && !uploadFailed);
+
+  const handleBeforeUnload = useCallback((e) => {
+    if (uploadInProgress) {
+      e.preventDefault();
+      e.returnValue = 'Changes you made may not be saved. Are you sure you want to leave?';
+      return e.returnValue;
+    }
+  }, [uploadInProgress]);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/categories', {
+        headers: {
+            Authorization: uuid
+        }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        const formattedCategories = data.map(cat => ({
+          id: cat.id,
+          title: cat.title
+        }));
+        formattedCategories.push({
+          id: "create_new",
+          title: "Create new category"
+        });
+        setCategories(formattedCategories);
+        let lastCategory = '';
+        if (typeof window !== 'undefined') {
+          lastCategory = localStorage.getItem('lastSelectedCategory') || '';
+        }
+        const found = formattedCategories.find(cat => cat.id === lastCategory);
+        if (found) {
+          setFormData(prev => ({ ...prev, category_select: lastCategory }));
+        } else if (formattedCategories.length > 1) {
+          setFormData(prev => ({ ...prev, category_select: formattedCategories[0].id }));
+        }
+      }
+    } catch (error) {
+      console.error('Failed to fetch categories:', error);
+    }
+  }, [uuid]);
 
   useEffect(() => {
     const performChecks = async () => {
@@ -71,37 +121,7 @@ export default function UploadPage() {
         clearInterval(statusIntervalRef.current);
       }
     };
-  }, []);
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch(API_BASE_URL + '/categories?showHidden=true');
-      if (response.ok) {
-        const data = await response.json();
-        const formattedCategories = data.map(cat => ({
-          id: cat.id,
-          title: cat.title
-        }));
-        formattedCategories.push({
-          id: "create_new",
-          title: "Create new category"
-        });
-        setCategories(formattedCategories);
-        let lastCategory = '';
-        if (typeof window !== 'undefined') {
-          lastCategory = localStorage.getItem('lastSelectedCategory') || '';
-        }
-        const found = formattedCategories.find(cat => cat.id === lastCategory);
-        if (found) {
-          setFormData(prev => ({ ...prev, category_select: lastCategory }));
-        } else if (formattedCategories.length > 1) {
-          setFormData(prev => ({ ...prev, category_select: formattedCategories[0].id }));
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-  };
+  }, [fetchCategories, handleBeforeUnload]);
 
   useEffect(() => {
     if (showSuccessToast) {
@@ -112,14 +132,6 @@ export default function UploadPage() {
       return () => clearTimeout(timer);
     }
   }, [showSuccessToast]);
-
-  const handleBeforeUnload = (e) => {
-    if (uploadInProgress) {
-      e.preventDefault();
-      e.returnValue = 'Changes you made may not be saved. Are you sure you want to leave?';
-      return e.returnValue;
-    }
-  };
 
   const handleCategoryChange = async (e) => {
     const newValue = e.target.value;
@@ -173,7 +185,6 @@ export default function UploadPage() {
     const fileName = file.name.replace(/\.[^/.]+$/, "");
     setFormData(prev => ({ ...prev, title: fileName }));
 
-    // Set date_created to file's last modified date
     const lastModifiedDate = new Date(file.lastModified);
     const formattedDate = lastModifiedDate.toISOString().split('T')[0];
     setFormData(prev => ({ ...prev, date_created: formattedDate }));
@@ -343,7 +354,6 @@ export default function UploadPage() {
       const uploadFormData = new FormData();
       uploadFormData.append('file', fileInput.files[0]);
       uploadFormData.append('content_id', videoId);
-      // uploadFormData.append('isMock', 'true')
 
       await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -616,35 +626,29 @@ export default function UploadPage() {
             </div>
           )}
 
-          {showProcessing && (
-            <div className="mb-4">
-              <h4 className="font-bold mb-2">Processing</h4>
-              <ul className="steps w-full">
-                <li className={`step ${['pending', 'starting', 'converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Waiting</li>
-                <li className={`step ${['starting', 'converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Starting</li>
-                <li className={`step ${['converting', 'done'].includes(processingStatus) ? 'step-success' : ''}`}>Processing</li>
-                <li className={`step ${['done'].includes(processingStatus) ? 'step-success' : ''}`}>Done</li>
-              </ul>
-              {processingStatus === 'starting' && (
-                <div className="mt-4">
-                  <progress className="progress progress-success w-full"></progress>
-                </div>
-              )}
-              {processingStatus === 'converting' && (
-                <div className="mt-4">
-                  <progress className="progress progress-success w-full" value={uploadProgress} max="100"></progress>
-                  <p className="mt-2">{uploadProgress}% complete</p>
-                </div>
-              )}
-            </div>
+          {showProcessing && contentId && (
+            <VideoState videoId={contentId} />
           )}
 
-          <p className="text-lg mt-4">
-            {processingStatus === 'starting' ? statusMessage : (processingStatus === 'converting' ? '' : statusMessage)}
-          </p>
-
-          <div className="modal-action">
-            {(uploadProgress === 100 && processingStatus === 'done' || uploadFailed) ? (
+          <div className="modal-action flex gap-2">
+            {showProcessing && contentId ? (
+              <>
+                <button
+                  className="btn btn-primary"
+                  onClick={() => {
+                    window.location.href = `/manage/content/edit?v=${contentId}`;
+                  }}
+                >
+                  Edit
+                </button>
+                <button
+                  className="btn btn-neutral"
+                  onClick={() => modalRef.current?.close()}
+                >
+                  Dismiss
+                </button>
+              </>
+            ) : (uploadProgress === 100 && processingStatus === 'done' || uploadFailed) ? (
               <button className="btn btn-success" onClick={() => modalRef.current?.close()}>Close</button>
             ) : (isUploading && uploadProgress < 100) ? (
               <button className="btn btn-error" onClick={handleCancelUpload}>Cancel Upload</button>

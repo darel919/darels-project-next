@@ -60,7 +60,7 @@ export default function AuthWarning({ returnPath }) {
   useEffect(() => {
     const handleMessage = (event) => {
       if (event.data && event.data.type === 'AUTH_SUCCESS') {
-        console.log("Received AUTH_SUCCESS message");
+        // console.log("Received AUTH_SUCCESS message");
         setIsRedirecting(false);
         window.location.reload();
       }

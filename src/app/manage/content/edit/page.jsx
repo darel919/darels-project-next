@@ -1,9 +1,10 @@
 "use client";
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import ErrorState from '@/components/ErrorState';
+import { useAuthStore } from "@/lib/authStore";
 
 async function fetchVideoData(videoId) {
     try {
@@ -27,26 +28,35 @@ async function fetchVideoData(videoId) {
     }
 }
 
-async function fetchCategories() {
-    try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/categories?showHidden=true');
-        if (!response.ok) {
-            throw new Error('Failed to fetch categories');
+function useCategoriesFetcher() {
+    const { userSession } = useAuthStore();
+    const uuid = userSession?.user?.user_metadata?.provider_id;
+    const fetchCategories = useCallback(async () => {
+        try {
+            const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/categories', {
+                headers: {
+                    Authorization: uuid
+                }
+            });
+            if (!response.ok) {
+                throw new Error('Failed to fetch categories');
+            }
+            const data = await response.json();
+            return Array.isArray(data) ? data : [];
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            throw error;
         }
-        const data = await response.json();
-        return Array.isArray(data) ? data : [];
-    } catch (error) {
-        console.error("Error fetching categories:", error);
-        throw error; 
-    }
+    }, [uuid]);
+    return fetchCategories;
 }
 
 export default function EditPage() {
     const searchParams = useSearchParams();
-    const params = searchParams
-    const videoId = params.get('v');
+    const videoId = searchParams.get('v');
     const router = useRouter();
-    
+    const fetchCategories = useCategoriesFetcher();
+
     const [videoData, setVideoData] = useState(null);
     const [categories, setCategories] = useState([]);
     const [selectedCategoryId, setSelectedCategoryId] = useState("");
@@ -84,24 +94,24 @@ export default function EditPage() {
         try {
             const [videoRes, fetchedCategories] = await Promise.all([
                 await fetchVideoData(videoId),
-                await fetchCategories() 
+                await fetchCategories()
             ]);
-            
+
             setVideoData(videoRes);
-            console.log(fetchedCategories)
+            // console.log(fetchedCategories)
             setCategories(fetchedCategories);
-            
+
             const currentCatId = videoRes.expand?.category?.[0]?.id || "";
             setSelectedCategoryId(currentCatId);
 
         } catch (fetchError) {
             console.error("Error fetching data:", fetchError);
-            const errorMessage = fetchError.message.includes("Video not found") 
-                ? "This video is unavailable." 
+            const errorMessage = fetchError.message.includes("Video not found")
+                ? "This video is unavailable."
                 : fetchError.message.includes("categories")
                 ? "Could not load categories."
                 : "An error occurred while loading data.";
-                
+
             const errorDesc = fetchError.message.includes("Video not found")
                 ? "We couldn't edit this video. Please recheck the video ID or choose another video to edit."
                 : fetchError.message.includes("categories")
@@ -168,7 +178,7 @@ export default function EditPage() {
 
     const handleCreateCategory = async (event) => {
         event.preventDefault();
-        if (!newCategoryTitle) return; 
+        if (!newCategoryTitle) return;
 
         setIsCreatingCategory(true);
         try {
@@ -185,24 +195,24 @@ export default function EditPage() {
                 throw new Error(errorData.message || 'Failed to create category');
             }
 
-            const newCategory = await response.json(); 
+            const newCategory = await response.json();
 
             const updatedCategories = await fetchCategories();
             setCategories(updatedCategories);
-            setSelectedCategoryId(newCategory.id); 
+            setSelectedCategoryId(newCategory.id);
 
-            modalRef.current?.close(); 
+            modalRef.current?.close();
 
         } catch (creationError) {
             console.error("Error creating category:", creationError);
-            alert(`Failed to create category: ${creationError.message}`); 
+            alert(`Failed to create category: ${creationError.message}`);
         } finally {
             setIsCreatingCategory(false);
         }
     };
 
     const handleCancelCreate = () => {
-        setSelectedCategoryId(videoData?.expand?.category?.[0]?.id || ""); 
+        setSelectedCategoryId(videoData?.expand?.category?.[0]?.id || "");
         modalRef.current?.close();
     };
 
@@ -246,14 +256,14 @@ export default function EditPage() {
             `;
             toastElement.appendChild(alertElement);
             document.body.appendChild(toastElement);
-            
+
             setFormChanges({
                 title: false,
                 desc: false,
                 category: false,
                 isHidden: false
             });
-            
+
             setTimeout(() => {
                 toastElement.remove();
                 window.location.reload();
@@ -273,7 +283,7 @@ export default function EditPage() {
             `;
             toastElement.appendChild(alertElement);
             document.body.appendChild(toastElement);
-            
+
             setTimeout(() => {
                 toastElement.remove();
             }, 3000);
@@ -306,7 +316,7 @@ export default function EditPage() {
                 `;
                 toastElement.appendChild(alertElement);
                 document.body.appendChild(toastElement);
-                
+
                 setTimeout(() => {
                     toastElement.remove();
                     window.location.href = '/manage/content';
@@ -326,7 +336,7 @@ export default function EditPage() {
                 `;
                 toastElement.appendChild(alertElement);
                 document.body.appendChild(toastElement);
-                
+
                 setTimeout(() => {
                     toastElement.remove();
                 }, 3000);
@@ -381,7 +391,7 @@ export default function EditPage() {
             `;
             toastElement.appendChild(alertElement);
             document.body.appendChild(toastElement);
-            
+
             setTimeout(() => {
                 toastElement.remove();
             }, 2000);
@@ -399,7 +409,7 @@ export default function EditPage() {
             `;
             toastElement.appendChild(alertElement);
             document.body.appendChild(toastElement);
-            
+
             setTimeout(() => {
                 toastElement.remove();
             }, 3000);
@@ -418,7 +428,7 @@ export default function EditPage() {
             action="manage"
         />;
     }
-    
+
     if (!videoId) {
          return <ErrorState 
             message="Invalid Video ID." 
@@ -432,6 +442,9 @@ export default function EditPage() {
         return <div className="min-h-screen pt-20 px-6 sm:px-10">Video data not available.</div>;
     }
 
+    const isProcessing = videoData.upload_status && videoData.upload_status.status !== "done";
+    const VideoState = isProcessing ? require('@/components/VideoState').default : null;
+
     return (
         <div className="min-h-screen pt-20 px-6 sm:px-10 pb-20">
             <section>
@@ -443,9 +456,16 @@ export default function EditPage() {
                         <li><p>Editing: <b>{videoData.title}</b></p></li>
                     </ul>
                 </div>
+                {isProcessing && VideoState && (
+                  <div className="mb-8">
+                    <div className="alert alert-info mb-4">This video is still processing.</div>
+                    <VideoState videoId={videoData.id} />
+                  </div>
+                )}
                 <section className='sm:flex items-center justify-between'>
                     <h1 className="text-2xl font-bold font-mono">Video details</h1>
                     <section className='mt-4 sm:mt-0'>
+                        
                         <button 
                             className="btn rounded-xl mx-1"
                             onClick={handleWatch}

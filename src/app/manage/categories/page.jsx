@@ -3,43 +3,38 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import ErrorState from "@/components/ErrorState";
-
 export const dynamic = 'force-dynamic';
 
-
-async function fetchCategories() {
-    try {
-        const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/categories?showHidden=true');
-        if (!response.ok) {
-            throw new Error('Failed to fetch categories');
-        }
-        const data = await response.json();
-        return Array.isArray(data) ? data : [];
-    } catch (error) {
-        console.error("Error fetching categories:", error);
-        throw error; 
-    }
-}
+import { useAuthStore } from "@/lib/authStore";
 
 export default function CategoryManagePage() {
     const [categoryData, setCategoryData] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+    const { userSession } = useAuthStore();
 
     useEffect(() => {
         async function loadCategories() {
-            setLoading(true);
             try {
-                const data = await fetchCategories();
-                setCategoryData(data);
+                const uuid = userSession?.user?.user_metadata?.provider_id;
+                const response = await fetch(process.env.NEXT_PUBLIC_API_BASE_URL + '/categories', {
+                    headers: {
+                        Authorization: uuid
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch categories');
+                }
+                const data = await response.json();
+                setCategoryData(Array.isArray(data) ? data : []);
                 setLoading(false);
             } catch (err) {
-                setError(err.message);
+                setError(err);
                 setLoading(false);
             }
         }
         loadCategories();
-    }, []);
+    }, [userSession]);
 
     if (error) {
         return <ErrorState 

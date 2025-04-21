@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import Loading from './loading';
 import LibraryItemViewer from '../components/LibraryItemViewer';
 import { getAllVideo } from '@/lib/api';
-import HomeGreetings from '@/components/HomeGreetings';
+import HomeGreetingsClient from '../components/HomeGreetingsClient';
 import ErrorState from '@/components/ErrorState';
 import SortPreference from '@/components/SortPreference';
 import { cookies } from 'next/headers';
@@ -59,7 +59,7 @@ async function Content({ searchParams }) {
   return (
     <section className="flex flex-col">
       <div className="z-10 w-full items-center justify-between font-mono text-sm">
-        <HomeGreetings/>
+        <HomeGreetingsClient/>
         <section className="flex items-center justify-between mt-8">
           <h1 className="text-4xl font-bold">Home</h1>
           <SortPreference defaultValue={sortBy} />

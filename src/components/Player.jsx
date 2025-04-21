@@ -147,7 +147,7 @@ export default function Player({ playerData, className }) {
 
     if (isInitializing || isSelfMode === null) {
         return (
-            <div className="w-full h-full flex justify-center items-center">
+            <div className={`w-full h-full flex justify-center items-center ${className}`}>
                 <div className="flex flex-col items-center">
                     <span className="loading loading-ball loading-xl"></span>
                     <h2 className="text-base-content font-light text-3xl mt-4">Loading iPlayer</h2>
