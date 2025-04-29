@@ -1,7 +1,7 @@
 "use client"
 import React, { useEffect, useState } from "react";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function VideoState({ videoId, onDone }) {
   const [processingStatus, setProcessingStatus] = useState("");

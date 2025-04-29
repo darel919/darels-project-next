@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import Loading from './loading';
 import AnalyticsClient from '@/components/AnalyticsClient';
+import ScrollToTop from "../components/ScrollToTop";
 import './globals.css';
 
 export const metadata = {
@@ -36,6 +37,7 @@ export default function RootLayout({
       </head>
       <body>
         <Navbar/>
+        <ScrollToTop />
         <Suspense fallback={<Loading />}>
           {children}
         </Suspense>

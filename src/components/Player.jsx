@@ -174,7 +174,7 @@ export default function Player({ playerData, className }) {
         return (
             <div 
                 ref={containerRef} 
-                className={`${className} rounded-lg overflow-hidden`}
+                className={`${className} card aspect-16/9 rounded-lg overflow-hidden`}
             ></div>
         );
     }

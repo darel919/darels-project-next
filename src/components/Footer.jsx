@@ -20,8 +20,11 @@ export default async function Footer() {
             <nav>
                 <h6 className="footer-title">Links</h6>
                 <a className="link link-hover" href="/about">About This Site</a>
+
                 <a className="link link-hover" target="_blank" href="https://github.com/darel919/darels-project-next">darel's Projects on GitHub</a>
-                <a className="link link-hover" target="_blank" href="https://darelisme.my.id">DWS Home</a>
+                <a className="link link-hover" target="_blank" href="https://darelisme.my.id" title="DWS home page">DWS Home</a>
+                <a className="link link-hover" target="_blank" href="https://status.darelisme.my.id" title="DWS status page">Status</a>
+                <a className="link link-hover" target="_blank" href="/sitemap.xml" title="Sitemap">Sitemap</a>
             </nav>
             <aside>
                 <p className="opacity-40 text-xs">This site uses Microsoft Clarity and Google Analytics to help gather usage statistics.</p>
