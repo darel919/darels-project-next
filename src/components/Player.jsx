@@ -19,29 +19,25 @@ export default function Player({ playerData, className }) {
 
     useEffect(() => {
         async function detectIsHome() {
-          const extHost = process.env.NEXT_PUBLIC_APP_EXT_BASE_URL?.replace(/^https?:\/\//, '');
-          const localBase = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL;
-          if (window.location.hostname === extHost) {
-            try {
-              const pingResponse = await fetch(process.env.NEXT_PUBLIC_DARELISME_PING_URL);
-              if (pingResponse.ok) {
-                setBaseAPIEndpoint(process.env.NEXT_PUBLIC_API_BASE_URL);
-              } else {
-                localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
-                window.location.href = localBase + window.location.pathname + window.location.search;
+            if (window.location.hostname === "projects.server.drl") {
                 setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
-              }
-            } catch {
-              localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
-              window.location.href = localBase + window.location.pathname + window.location.search;
-              setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
+                return;
             }
-          } else {
-            setBaseAPIEndpoint(process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL);
-          }
+            try {
+                const res = await fetch(process.env.NEXT_PUBLIC_DARELISME_PING_URL, { cache: "no-store", timeout: 5000 });
+                if (res.ok) {
+                    setBaseAPIEndpoint(process.env.NEXT_PUBLIC_API_BASE_URL);
+                    return;
+                }
+                localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
+                window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + window.location.pathname + window.location.search;
+            } catch {
+                localStorage.setItem('redirectAfterSwitch', window.location.pathname + window.location.search);
+                window.location.href = process.env.NEXT_PUBLIC_APP_LOCAL_BASE_URL + window.location.pathname + window.location.search;
+            }
         }
         detectIsHome();
-      }, []);
+    }, []);
 
     useEffect(() => {
         if (!playerData) return;

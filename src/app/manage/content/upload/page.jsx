@@ -4,12 +4,11 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import dynamic from "next/dynamic";
 import ErrorState from '@/components/ErrorState';
 import Link from 'next/link';
+import VideoState from '@/components/VideoState';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_LOCAL_API_BASE_URL;
 
 import { useAuthStore } from "@/lib/authStore";
-
-const VideoState = dynamic(() => import("@/components/VideoState"), { ssr: false });
 
 export default function UploadPage() {
   const { userSession } = useAuthStore();
